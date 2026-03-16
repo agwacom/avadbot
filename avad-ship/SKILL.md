@@ -122,7 +122,7 @@ Generate it. Read the project's available context to infer the workflow:
      - **B) Stash and exclude** — changes are unrelated, stash them before shipping
      - **C) Show me the changes** — display the diff so I can decide
    - If user picks A: stage all and continue
-   - If user picks B: `git stash push -m "ship: stashed unrelated changes"` and continue
+   - If user picks B: `git stash push -u -m "ship: stashed unrelated changes"` and continue
    - If user picks C: show `git diff` and `git status`, then re-ask A or B
 
 4. Confirm the branch represents one logical change only.
