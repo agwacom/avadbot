@@ -47,8 +47,6 @@ for skill_dir in "$AVADBOT_DIR"/*/; do
   [ -f "$skill_dir/SKILL.md" ] || continue
   skill_name="$(basename "$skill_dir")"
 
-  # Skip reference copies — not installable skills
-  [ "$skill_name" = "gstack-fork" ] && continue
   target="$CLAUDE_SKILLS/$skill_name"
 
   # Remove old version, copy fresh

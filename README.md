@@ -181,10 +181,6 @@ Runtime data lives under `~/.avadbot/`:
         └── review-checklist.md
 ```
 
-## Origin
-
-Forked from [gstack](https://github.com/garrytan/gstack) by Garry Tan. Made generic — no hardcoded project assumptions, works with any stack.
-
 ## License
 
 MIT
