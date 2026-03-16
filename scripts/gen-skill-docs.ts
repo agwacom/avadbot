@@ -114,6 +114,10 @@ If \`NEEDS_SETUP\`:
 3. If \`bun\` is not installed: \`curl -fsSL https://bun.sh/install | bash\``;
 }
 
+function generateQAMethodology(): string {
+  return fs.readFileSync(path.join(ROOT, 'references', 'qa-methodology.md'), 'utf-8').trimEnd();
+}
+
 function generateVersion(): string {
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf-8'));
   return pkg.version;
@@ -148,6 +152,7 @@ const RESOLVERS: Record<string, () => string> = {
   COMMAND_REFERENCE: generateCommandReference,
   SNAPSHOT_FLAGS: generateSnapshotFlags,
   BROWSE_SETUP: generateBrowseSetup,
+  QA_METHODOLOGY: generateQAMethodology,
   VERSION: generateVersion,
   SKILL_LIST: generateSkillList,
 };
