@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# avadbot setup — install all skills to ~/.claude/skills/
+set -e
+
+AVADBOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CLAUDE_SKILLS="$HOME/.claude/skills"
+BROWSE_BIN="$AVADBOT_DIR/browse/dist/browse"
+
+# 1. Ensure ~/.claude/skills/ exists
+mkdir -p "$CLAUDE_SKILLS"
+
+# 2. Build browse binary if needed
+if [ -d "$AVADBOT_DIR/browse/src" ]; then
+  NEEDS_BUILD=0
+  if [ ! -x "$BROWSE_BIN" ]; then
+    NEEDS_BUILD=1
+  elif [ -n "$(find "$AVADBOT_DIR/browse/src" -type f -newer "$BROWSE_BIN" -print -quit 2>/dev/null)" ]; then
+    NEEDS_BUILD=1
+  fi
+
+  if [ "$NEEDS_BUILD" -eq 1 ]; then
+    echo "Building browse binary..."
+    if ! command -v bun &>/dev/null; then
+      echo "Installing bun..."
+      curl -fsSL https://bun.sh/install | bash
+      export PATH="$HOME/.bun/bin:$PATH"
+    fi
+    (
+      cd "$AVADBOT_DIR/browse"
+      bun install
+      bun build --compile src/cli.ts --outfile dist/browse
+    )
+  fi
+
+  # Ensure Playwright Chromium is available
+  if [ -x "$BROWSE_BIN" ]; then
+    if ! (cd "$AVADBOT_DIR/browse" && bun --eval 'import { chromium } from "playwright"; const b = await chromium.launch(); await b.close();') >/dev/null 2>&1; then
+      echo "Installing Playwright Chromium..."
+      (cd "$AVADBOT_DIR/browse" && bunx playwright install chromium)
+    fi
+  fi
+fi
+
+# 3. Copy each skill to ~/.claude/skills/
+installed=()
+for skill_dir in "$AVADBOT_DIR"/*/; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  skill_name="$(basename "$skill_dir")"
+
+  # Skip reference copies — not installable skills
+  [ "$skill_name" = "gstack-fork" ] && continue
+  target="$CLAUDE_SKILLS/$skill_name"
+
+  # Remove old version, copy fresh
+  rm -rf "$target"
+  cp -r "$skill_dir" "$target"
+  installed+=("$skill_name")
+done
+
+# 4. Ensure ~/.avadbot/ data directory exists
+mkdir -p "$HOME/.avadbot/projects"
+
+# 5. Summary
+echo ""
+echo "avadbot ready."
+if [ -x "$BROWSE_BIN" ]; then
+  echo "  browse: $BROWSE_BIN"
+fi
+if [ ${#installed[@]} -gt 0 ]; then
+  echo "  installed: ${installed[*]}"
+fi
+echo ""
+echo "Add to ~/.claude/CLAUDE.md:"
+echo "  Available skills: /${installed[*]// /, \/}"

@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Set up avadbot for local development — test skills from within this repo.
+#
+# Creates .claude/skills/ symlinks so Claude Code discovers skills from your
+# working tree. Changes take effect immediately — no copy/deploy needed.
+#
+# Also copies .env from the main worktree if this is a Conductor workspace
+# or git worktree (so API keys carry over automatically).
+#
+# Usage: bin/dev-setup       # set up
+#        bin/dev-teardown    # clean up
+set -e
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# 1. Copy .env from main worktree (if we're a worktree and don't have one)
+if [ ! -f "$REPO_ROOT/.env" ]; then
+  MAIN_WORKTREE="$(git -C "$REPO_ROOT" worktree list --porcelain 2>/dev/null | head -1 | sed 's/^worktree //')"
+  if [ -n "$MAIN_WORKTREE" ] && [ "$MAIN_WORKTREE" != "$REPO_ROOT" ] && [ -f "$MAIN_WORKTREE/.env" ]; then
+    cp "$MAIN_WORKTREE/.env" "$REPO_ROOT/.env"
+    echo "Copied .env from main worktree ($MAIN_WORKTREE)"
+  fi
+fi
+
+# 2. Install dependencies
+if [ ! -d "$REPO_ROOT/node_modules" ]; then
+  echo "Installing dependencies..."
+  (cd "$REPO_ROOT" && bun install)
+fi
+
+# 3. Create .claude/skills/ inside the repo
+mkdir -p "$REPO_ROOT/.claude/skills"
+
+# 4. Symlink each skill directory into .claude/skills/
+# avadbot skills live as top-level dirs with SKILL.md inside them
+linked=()
+for skill_dir in "$REPO_ROOT"/*/; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  link="$REPO_ROOT/.claude/skills/$skill_name"
+
+  if [ -L "$link" ]; then
+    rm "$link"
+  elif [ -d "$link" ]; then
+    echo "Warning: .claude/skills/$skill_name is a real directory, skipping." >&2
+    continue
+  fi
+
+  ln -s "$skill_dir" "$link"
+  linked+=("$skill_name")
+done
+
+echo ""
+echo "Dev mode active. Skills resolve from this working tree."
+if [ ${#linked[@]} -gt 0 ]; then
+  echo "  linked: ${linked[*]}"
+fi
+echo ""
+echo "Edit any SKILL.md and test immediately — no copy/deploy needed."
+echo "To tear down: bin/dev-teardown"
