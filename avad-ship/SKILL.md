@@ -111,11 +111,19 @@ Generate it. Read the project's available context to infer the workflow:
 2. Confirm the current branch is a valid work branch:
    - Must NOT be a protected branch (as defined in `docs/GIT_WORKFLOW.md`)
    - Must follow the branch naming conventions from `docs/GIT_WORKFLOW.md`
-   - If on a protected branch, **abort**: "You're on `<branch>`. Land from a work branch."
+   - If on a protected branch, use **AskUserQuestion** with options:
+     - **A) Create a work branch** — move changes to a new branch (e.g. `chore/description`) and continue shipping
+     - **B) Commit on `<branch>` directly** — bypass branch protection rule
+     - **C) Abort** — stop shipping
 
 3. Check for uncommitted changes:
-   - If changes are **related** to the branch's logical purpose — stage them silently
-   - If changes are **unrelated** or ambiguous — stop and report
+   - If there are uncommitted changes, use **AskUserQuestion** with options:
+     - **A) Stage and include** — changes are related to this branch's work
+     - **B) Stash and exclude** — changes are unrelated, stash them before shipping
+     - **C) Show me the changes** — display the diff so I can decide
+   - If user picks A: stage all and continue
+   - If user picks B: `git stash push -m "ship: stashed unrelated changes"` and continue
+   - If user picks C: show `git diff` and `git status`, then re-ask A or B
 
 4. Confirm the branch represents one logical change only.
    If the branch history mixes unrelated work, stop and require splitting.
