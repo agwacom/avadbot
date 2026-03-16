@@ -8,5 +8,12 @@ All notable changes to avadbot will be documented in this file.
 - **`/avad-qa-report`** — report-only QA testing. Same methodology as `/avad-qa` but never fixes anything. Use for "just report bugs" or handing off to another team. Ported from gstack `qa-only` (v0.4.0).
 - **Setup excludes `.tmpl` files** — `./setup` no longer copies template files to `~/.claude/skills/`. End users only get the generated `SKILL.md`.
 
+### Changed
+- **TODOS.md cross-skill awareness** — 5 skills now read `TODOS.md` for project context: `avad-review` (Step 4.75), `avad-ship` (Step 5.5 auto-update), `avad-retro` (Backlog Health metric), `avad-plan-ceo-review` (system audit), `avad-plan-eng-review` (Step 0).
+- **Test Plan Artifact flow** — `avad-plan-eng-review` now generates test plan files to `~/.avadbot/projects/` for downstream `/avad-qa` consumption. Added `Write` to allowed-tools.
+- **`TODOS-format.md`** — canonical TODO item format reference, shared by `avad-ship` and `avad-plan-ceo-review`.
+- **`avad-retro` Backlog Health** — new metric row showing open TODO counts, P0/P1 items, and completed items per period.
+
 ### Fixed
 - **`TODOS.md` naming** — renamed `TODO.md` → `TODOS.md` to match upstream gstack and fix broken references in `avad-plan-ceo-review` and `avad-plan-eng-review`.
+- **Dead ref in avad-plan-ceo-review** — referenced nonexistent `TODOS-format.md`, now resolved by creating the file.

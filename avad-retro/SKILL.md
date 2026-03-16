@@ -85,6 +85,9 @@ git shortlog origin/main --since="<window>" -sn --no-merges
 # 8. Bot review triage history (if available)
 REMOTE_SLUG=$(basename "$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null)" 2>/dev/null || basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
 cat ~/.avadbot/projects/$REMOTE_SLUG/bot-review-history.md 2>/dev/null || true
+
+# 9. TODOS.md backlog snapshot (if available)
+cat TODOS.md 2>/dev/null || true
 ```
 
 ### Step 2: Compute Metrics
@@ -105,7 +108,10 @@ Calculate and present these metrics in a summary table:
 | Active days | N |
 | Detected sessions | N |
 | Avg LOC/session-hour | N |
+| Backlog Health | N open (X P0/P1, Y P2) · Z completed this period |
 | Bot review signal | N% (Y catches, Z FPs) |
+
+**Backlog Health (if TODOS.md exists):** Read `TODOS.md` (fetched in Step 1, command 9). Count total open items, P0/P1 items, P2 items. Use `git log` to detect items moved to `## Completed` within the time window (completed this period) and new items added (added this period). If `TODOS.md` doesn't exist, skip the Backlog Health metric row. Save to the JSON snapshot as the `backlog` field.
 
 **Bot review signal (if history exists):** Read `~/.avadbot/projects/<repo>/bot-review-history.md` (fetched in Step 1, command 8). Filter entries within the retro time window by date. Count entries by type: `fix`, `fp`, `already-fixed`. Compute signal ratio: `(fix + already-fixed) / (fix + already-fixed + fp)`. If no entries exist in the window or the file doesn't exist, skip the Bot review signal metric row. Skip unparseable lines silently.
 
@@ -306,6 +312,13 @@ Use the Write tool to save the JSON file with this schema:
   "version_range": ["1.16.0.0", "1.16.1.0"],
   "streak_days": 47,
   "tweetable": "Week of Mar 1: 47 commits (3 contributors), 3.2k LOC, 38% tests, 12 PRs, peak: 10pm",
+  "backlog": {
+    "total_open": 12,
+    "p0_p1": 3,
+    "p2": 5,
+    "completed_this_period": 2,
+    "added_this_period": 1
+  },
   "bot_review": {
     "fixes": 3,
     "fps": 1,

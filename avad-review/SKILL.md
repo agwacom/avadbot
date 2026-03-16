@@ -86,7 +86,17 @@ read it and use it.
    - Domain-specific rules (canonical values, idempotency, etc.)
    - Security boundaries (auth, tokens, user input)
 
-2. Generate `~/.avadbot/projects/<repo>/review-checklist.md` following this structure:
+2. Read `checklist-seed.md` in this skill directory.
+   Use it as a **bootstrap taxonomy only**:
+   - start from its seed categories and suppressions
+   - prune anything irrelevant to the project
+   - rename categories to match the project's actual risks and vocabulary
+   - add project-specific categories and suppressions from docs and code
+   - never copy the seed verbatim as the final checklist
+   - no code transforms the seed; the agent reads it as context and synthesizes
+     the final project-specific checklist
+
+3. Generate `~/.avadbot/projects/<repo>/review-checklist.md` following this structure:
 
    ```markdown
    # Pre-Landing Review Checklist
@@ -133,9 +143,11 @@ read it and use it.
    <generate 3-5 suppression rules to reduce false positives>
    ```
 
-3. The categories must be **derived from the project**, not generic boilerplate.
+4. Start from the seed file, but the final categories must still be **derived from the project**, not generic boilerplate.
+   Every category and suppression should reflect repo-specific signals from `CLAUDE.md`,
+   `AGENTS.md`, architecture docs, or the codebase itself.
 
-4. Write the file. This persists — future runs use it directly.
+5. Write the file. This persists — future runs use it directly.
 
 ---
 
@@ -201,6 +213,18 @@ For each non-suppressed comment:
 | **SUPPRESSED** | Known false positive from history |
 
 Store the classifications — they are included in Step 6 output.
+
+---
+
+## Step 4.75: TODOS.md Cross-Reference
+
+Read `TODOS.md` in the repo root (skip silently if it doesn't exist). Check whether the diff:
+
+1. **Closes** any open TODO items — note them for the review output
+2. **Creates work** that needs a new TODO item — flag it as informational
+3. **Has related TODOs** that provide useful review context — use them to inform your review
+
+This step enriches the review with project context but does not block it.
 
 ---
 

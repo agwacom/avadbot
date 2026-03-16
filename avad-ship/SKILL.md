@@ -225,7 +225,16 @@ read it and use it.
    - Domain-specific rules (canonical values, idempotency requirements, etc.)
    - Security boundaries (auth, tokens, user input handling)
 
-2. Generate `~/.avadbot/projects/<repo>/review-checklist.md` following this structure:
+2. Read `../avad-review/checklist-seed.md` and use it as the bootstrap taxonomy.
+   Adapt it before writing anything:
+   - keep only categories that matter to this repo
+   - rename categories to match the project's actual architecture and vocabulary
+   - add project-specific categories and suppressions from docs and code
+   - never copy the seed verbatim as the final checklist
+   - no code transforms the seed; the agent reads it as context and synthesizes
+     the final project-specific checklist
+
+3. Generate `~/.avadbot/projects/<repo>/review-checklist.md` following this structure:
 
    ```markdown
    # Pre-Landing Review Checklist
@@ -273,7 +282,7 @@ read it and use it.
    <generate 3-5 suppression rules to reduce false positives>
    ```
 
-3. The categories must be **derived from the project**, not generic boilerplate.
+4. Start from the seed file, but the final categories must be **derived from the project**, not generic boilerplate.
    Examples of how project signals map to checklist items:
 
    | Project signal | → Critical category |
@@ -291,7 +300,7 @@ read it and use it.
    | Migration files present | Editing applied migrations |
    | Test directory exists | Test gaps for new code paths |
 
-4. Write the file to `~/.avadbot/projects/<repo>/review-checklist.md` and continue.
+5. Write the file to `~/.avadbot/projects/<repo>/review-checklist.md` and continue.
    This file persists — future `/ship` runs will use it directly.
 
 ### Step 5.1: Apply the Checklist
@@ -315,6 +324,28 @@ read it and use it.
 - **INFORMATIONAL:** Output them and continue. They go into the PR body.
 
 - **No issues:** Output `Pre-Landing Review: No issues found.` and continue.
+
+---
+
+## Step 5.5: TODOS.md Auto-Update
+
+Read `TODOS.md` in the repo root. If it doesn't exist, skip this step silently.
+
+If it exists:
+
+1. **Detect completed items:** Scan the diff and commit history for work that closes open TODOs.
+   Match conservatively — only mark items done when the diff clearly resolves the TODO's **What** description.
+
+2. **Move completed items** to the `## Completed` section, preserving original content and appending:
+   ```markdown
+   **Completed:** vX.Y.Z (YYYY-MM-DD)
+   ```
+
+3. **Check structure:** Verify items follow the format in `avad-review/TODOS-format.md`
+   (What/Why/Context/Effort/Priority). Do not rewrite existing items — only flag malformed ones
+   as informational.
+
+4. If any items were moved to Completed, stage `TODOS.md` for the version bump commit in Step 8.
 
 ---
 
