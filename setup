@@ -52,6 +52,8 @@ for skill_dir in "$AVADBOT_DIR"/*/; do
   # Remove old version, copy fresh
   rm -rf "$target"
   cp -r "$skill_dir" "$target"
+  # Remove template files — development only, not needed by end users
+  find "$target" -name '*.tmpl' -delete
   installed+=("$skill_name")
 done
 

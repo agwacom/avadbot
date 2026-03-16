@@ -13,6 +13,7 @@ Works with any project, any language, any framework.
 | `/avad-review` | Pre-landing review. Structural bugs, race conditions, trust boundaries, missing tests. |
 | `/avad-ship` | Ship it. Sync, test, review, push, PR — one command. |
 | `/avad-qa` | QA testing. Diff-aware, full, quick, or regression mode. |
+| `/avad-qa-report` | QA report only. Same testing, but never fixes — just documents. |
 | `/avad-retro` | Weekly retro. Commits, patterns, team breakdown, trends. |
 | `/browse` | Headless browser. Navigate, click, screenshot, assert — ~100ms per command. |
 
@@ -109,6 +110,10 @@ QA testing with a real browser. Four modes:
 
 Produces a structured report with health score, screenshots, and repro steps.
 
+### `/avad-qa-report`
+
+Report-only variant of `/avad-qa`. Same modes (diff-aware, full, quick, regression), same health score, same screenshots — but it **never fixes anything**. Use when you want a bug report to hand off, or when testing someone else's work.
+
 ### `/avad-retro`
 
 Weekly engineering retrospective:
@@ -156,6 +161,7 @@ cp -r avad-review ~/.claude/skills/
 cp -r avad-plan-ceo-review ~/.claude/skills/
 cp -r avad-plan-eng-review ~/.claude/skills/
 cp -r avad-qa ~/.claude/skills/
+cp -r avad-qa-report ~/.claude/skills/
 cp -r avad-retro ~/.claude/skills/
 cp -r browse ~/.claude/skills/
 ```
@@ -165,7 +171,7 @@ Add to your `~/.claude/CLAUDE.md`:
 ```markdown
 ## avadbot
 
-Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /browse
+Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-qa-report, /avad-retro, /browse
 ```
 
 ## Per-project data
