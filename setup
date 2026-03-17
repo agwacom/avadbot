@@ -52,18 +52,20 @@ for skill_dir in "$AVADBOT_DIR"/*/; do
   # Remove old version, copy fresh
   rm -rf "$target"
   cp -r "$skill_dir" "$target"
-  # Mark as avadbot-managed so prune only removes our skills
   touch "$target/.avadbot-managed"
   # Remove template files — development only, not needed by end users
   find "$target" -name '*.tmpl' -delete
   installed+=("$skill_name")
 done
 
-# 4. Prune skills that no longer exist in source
+# One-time migration: remove setup-browser-cookies (merged into browse 1.1.4)
+rm -rf "$CLAUDE_SKILLS/setup-browser-cookies"
+
+# 4. Prune avadbot skills that no longer exist in source
 for installed_dir in "$CLAUDE_SKILLS"/*/; do
   skill_name="$(basename "$installed_dir")"
-  [ -f "$AVADBOT_DIR/$skill_name/SKILL.md" ] && continue
   [ -f "$installed_dir/.avadbot-managed" ] || continue
+  [ -f "$AVADBOT_DIR/$skill_name/SKILL.md" ] && continue
   echo "  pruning removed skill: $skill_name"
   rm -rf "$installed_dir"
 done

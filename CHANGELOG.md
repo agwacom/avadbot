@@ -2,6 +2,12 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [1.1.4] - 2026-03-17
+
+### Changed
+- **Merged `setup-browser-cookies` into `browse`** — cookie import now available via `$B cookie-import-browser`, documented in browse's new Cookie Import Workflow section. No functionality removed.
+- **Setup prune logic** — `./setup` now marks installed skills with `.avadbot-managed` and auto-removes skills that were previously installed by avadbot but no longer exist in source. Third-party skills are left untouched.
+
 ## 2026-03-16
 
 ### Added

@@ -4,7 +4,8 @@ version: 1.1.0
 description: |
   Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with
   elements, verify page state, diff before/after actions, take annotated screenshots, check
-  responsive layouts, test forms and uploads, handle dialogs, and assert element states.
+  responsive layouts, test forms and uploads, handle dialogs, assert element states, and
+  import cookies from your real browser for authenticated page testing.
   ~100ms per command. Use when you need to test a feature, verify a deployment, dogfood a
   user flow, or file a bug with evidence.
 allowed-tools:
@@ -41,6 +42,29 @@ If `NEEDS_SETUP`:
 1. Tell the user: "avadbot browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait.
 2. Run: `cd <SKILL_DIR> && ./setup`
 3. If `bun` is not installed: `curl -fsSL https://bun.sh/install | bash`
+
+## Cookie Import Workflow
+
+To test authenticated pages, import cookies from your real browser:
+
+### Quick (direct import)
+```bash
+$B cookie-import-browser comet --domain github.com
+```
+
+### Interactive (picker UI)
+```bash
+$B cookie-import-browser
+```
+Opens a picker UI — select domains to import, then verify:
+```bash
+$B cookies
+```
+
+**Notes:**
+- First import per browser may trigger a macOS Keychain dialog — click "Allow"
+- Supported browsers: Comet, Chrome, Arc, Brave, Edge
+- Cookies persist for the session — import once, then browse authenticated pages
 
 ## Core QA Patterns
 

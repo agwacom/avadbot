@@ -605,7 +605,8 @@ Write your retrospective report to ${retroDir}/retro-output.md`,
 
 describeE2E('Deferred skill E2E', () => {
   test.todo('/avad-ship completes full workflow');
-  test.todo('/setup-browser-cookies imports cookies');
+  // TODO: Add real E2E test proving /browse handles cookie import via cookie-import-browser command
+  test.todo('/browse cookie-import-browser invoked for cookie setup');
 });
 
 // Finalize eval collector
