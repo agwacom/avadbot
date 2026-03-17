@@ -118,7 +118,16 @@ Generate it. Read the project's available context to infer the workflow:
      - **C) Abort** — stop shipping
 
 3. Check for uncommitted changes:
-   - If there are uncommitted changes, use **AskUserQuestion** with options:
+   - If there are uncommitted changes, auto-recommend an option based on context:
+     - **Recommend "Stage and include"** when: changed files are in the same area as
+       branch commits (same directories/modules), OR the branch has no prior commits
+       yet (all work is uncommitted)
+     - **Recommend "Stash and exclude"** when: changed files are unrelated to the
+       branch's commit history (different directories/modules), OR the files are
+       scratch/temp files (e.g. `test.md`, `scratch.*`, `tmp.*`)
+     - **Recommend "Delete it"** when: files are clearly throwaway (e.g. `test.md`
+       in root with no meaningful content, temp debug files)
+   - Use **AskUserQuestion** with options (mark the recommended option with `(Recommended)`):
      - **A) Stage and include** — changes are related to this branch's work
      - **B) Stash and exclude** — changes are unrelated, stash them before shipping
      - **C) Show me the changes** — display the diff so I can decide

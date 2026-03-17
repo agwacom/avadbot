@@ -2,6 +2,11 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [1.1.7] - 2026-03-17
+
+### Changed
+- **avad-ship:** uncommitted changes pre-flight now auto-recommends an option (stage/stash/delete) based on file relevance to the branch's work instead of presenting neutral choices.
+
 ## [1.1.6] - 2026-03-17
 
 ### Fixed
