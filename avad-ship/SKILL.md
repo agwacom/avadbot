@@ -21,14 +21,13 @@ You are running the `/ship` workflow. This is **automated by default** — run s
 and output the PR URL at the end.
 
 **Only stop for:**
-- Being on a protected branch (abort)
+- Being on a protected branch (ask user: create work branch / commit directly / abort)
 - Merge conflicts that can't be auto-resolved (show conflicts)
 - Validation failures (show failures)
 - CRITICAL review findings — one AskUserQuestion per critical issue
 - Cannot discover target branch or test commands (ask once)
 
 **Never stop for:**
-- Uncommitted changes that belong to the branch's logical change (stage and include them)
 - Commit message wording (auto-compose)
 - PR body content (auto-generate)
 
@@ -36,16 +35,18 @@ and output the PR URL at the end.
 
 ## Safety Check
 
-Before anything else, verify you are NOT on a known protected branch:
+Before anything else, check if you are on a known protected branch:
 
 ```bash
 branch=$(git branch --show-current)
 ```
 
-If `$branch` is `main` or `master`, **abort immediately**:
-"You're on `<branch>`. Land from a work branch."
+If `$branch` is `main` or `master`, use **AskUserQuestion** with options:
+- **A) Create a work branch** — move changes to a new branch and continue shipping
+- **B) Commit on `<branch>` directly** — bypass branch protection rule
+- **C) Abort** — stop shipping
 
-This prevents Step 0 from committing a generated `GIT_WORKFLOW.md` onto a protected branch.
+This prevents accidentally committing onto a protected branch while still giving the user control.
 
 ---
 
