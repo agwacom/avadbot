@@ -9,7 +9,7 @@ description: |
   branches), full (systematic exploration), quick (30-second smoke test), regression
   (compare against baseline). Three tiers: Quick (critical/high only), Standard (+medium),
   Exhaustive (+cosmetic). Produces before/after health scores, fix evidence, and
-  ship-readiness summary. For report-only mode, use /avad-qa-report.
+  ship-readiness summary. Supports report-only mode — asks whether to fix or just report.
 allowed-tools:
   - Bash
   - Read
@@ -38,6 +38,7 @@ You are a QA engineer AND a bug-fix engineer. Test web applications like a real 
 | Output dir | `.avadbot/qa-reports/` | `Output to /tmp/qa` |
 | Scope | Full app (or diff-scoped) | `Focus on the billing page` |
 | Auth | None | `Sign in to user@example.com`, `Import cookies from cookies.json` |
+| Report only | No (asks after testing) | `--report-only` (skip fix decision, go straight to report) |
 
 **Tiers determine which issues get fixed:**
 - **Quick:** Fix critical + high severity only
@@ -46,13 +47,14 @@ You are a QA engineer AND a bug-fix engineer. Test web applications like a real 
 
 **If no URL is given and you're on a feature branch:** Automatically enter **diff-aware mode** (see Modes below). This is the most common case — the user just shipped code on a branch and wants to verify it works.
 
-**Require clean working tree before starting:**
+**Check working tree status:**
 ```bash
+DIRTY_TREE=""
 if [ -n "$(git status --porcelain)" ]; then
-  echo "ERROR: Working tree is dirty. Commit or stash changes before running /qa."
-  exit 1
+  DIRTY_TREE=1
 fi
 ```
+If the tree is dirty AND the user did NOT pass `--report-only`, warn but continue to Phase 6.5 — the check will be enforced before entering the fix path (Phase 7). If `--report-only`, proceed without warning.
 
 **Find the browse binary:**
 
@@ -394,6 +396,31 @@ Record baseline health score at end of Phase 6.
 
 ---
 
+### Phase 6.5: Fix Decision
+
+After completing the QA baseline, present the findings and ask the user:
+
+> Found {N} issues: {critical} critical, {high} high, {medium} medium, {low} low.
+>
+> **A) Fix them** — triage by tier, fix in source code with atomic commits, re-verify
+> **B) Report only** — write the report and stop. No source code changes.
+
+Use AskUserQuestion to get the user's choice.
+
+**Shortcut:** If the user passed `--report-only` in the original request, skip the question and go directly to report mode.
+
+**If "Report only":**
+- Skip directly to Phase 10 (Report)
+- Do NOT read source code, edit files, or suggest fixes in the report
+- Do NOT include fix recommendations — only document what's broken
+- The report should note "Mode: report-only" in the metadata
+
+**If "Fix them":**
+- Continue to Phase 7 (Triage) as normal
+- If working tree is dirty: STOP — tell the user to commit or stash first
+
+---
+
 ### Phase 7: Triage
 
 Sort all discovered issues by severity, then decide which to fix based on the selected tier:
@@ -527,7 +554,7 @@ If the repo has a `TODOS.md`:
 
 ## Additional Rules (qa-specific)
 
-11. **Clean working tree required.** Refuse to start if `git status --porcelain` is non-empty.
+11. **Clean working tree required for fixes.** If `git status --porcelain` is non-empty, report-only mode is allowed but fixes are blocked until the tree is clean.
 12. **One commit per fix.** Never bundle multiple fixes into one commit.
 13. **Never modify tests or CI configuration.** Only fix application source code.
 14. **Revert on regression.** If a fix makes things worse, `git revert HEAD` immediately.

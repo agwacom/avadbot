@@ -48,8 +48,7 @@ avadbot/
 ├── avad-review/             # /avad-review — pre-landing code review
 ├── avad-plan-ceo-review/    # /avad-plan-ceo-review — CEO plan review
 ├── avad-plan-eng-review/    # /avad-plan-eng-review — eng manager plan review
-├── avad-qa/                 # /avad-qa — QA testing workflow (test + fix)
-├── avad-qa-report/          # /avad-qa-report — QA report only (never fixes)
+├── avad-qa/                 # /avad-qa — QA testing workflow (test + fix + report-only)
 ├── avad-retro/              # /avad-retro — weekly engineering retrospective
 ├── setup-browser-cookies/   # /setup-browser-cookies — import real browser cookies
 ├── browse/                  # Headless browser CLI (Playwright)
