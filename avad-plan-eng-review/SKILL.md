@@ -45,6 +45,7 @@ Before reviewing anything, answer these questions:
    - Items that **block** this plan or are **blocked by** it
    - Items that could be **bundled** with this plan for minimal extra effort
    - New TODO items this plan will create — draft them now for the TODOS.md updates section
+5. **Documentation completeness:** Does the plan include a documentation section listing all files that need cross-reference updates? Plans without this section are incomplete.
 
 Then ask if I want one of three options:
 1. **SCOPE REDUCTION:** The plan is overbuilt. Propose a minimal version that achieves the core goal, then review that.

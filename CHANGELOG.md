@@ -2,6 +2,11 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [1.1.5] - 2026-03-17
+
+### Changed
+- **avad-plan-eng-review:** added documentation completeness check to Step 0 scope challenge — plans must include a documentation section listing cross-reference updates
+
 ## [1.1.4] - 2026-03-17
 
 ### Changed
