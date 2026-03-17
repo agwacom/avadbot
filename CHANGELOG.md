@@ -2,6 +2,12 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [1.1.8] - 2026-03-17
+
+### Changed
+- **avad-ship:** elevated post-sync empty-diff check to dedicated Step 2.5 hard gate — prevents shipping on dead branches that passed Step 1 pre-flight
+- **avad-ship:** refactored pre-flight uncommitted changes options — separated "Delete and discard" as its own choice, added "Show me the changes" option
+
 ## [1.1.7] - 2026-03-17
 
 ### Changed

@@ -123,17 +123,18 @@ Generate it. Read the project's available context to infer the workflow:
        branch commits (same directories/modules), OR the branch has no prior commits
        yet (all work is uncommitted)
      - **Recommend "Stash and exclude"** when: changed files are unrelated to the
-       branch's commit history (different directories/modules), OR the files are
-       scratch/temp files (e.g. `test.md`, `scratch.*`, `tmp.*`)
-     - **Recommend "Delete it"** when: files are clearly throwaway (e.g. `test.md`
-       in root with no meaningful content, temp debug files)
+       branch's commit history (different directories/modules)
+     - **Recommend "Delete and discard"** when: files are clearly throwaway (e.g. `test.md`
+       in root with no meaningful content, temp debug files, scratch files)
    - Use **AskUserQuestion** with options (mark the recommended option with `(Recommended)`):
      - **A) Stage and include** — changes are related to this branch's work
      - **B) Stash and exclude** — changes are unrelated, stash them before shipping
-     - **C) Show me the changes** — display the diff so I can decide
+     - **C) Delete and discard** — files are throwaway, delete them before shipping
+     - **D) Show me the changes** — display the diff so I can decide
    - If user picks A: stage all and continue
    - If user picks B: `git stash push -u -m "ship: stashed unrelated changes"` and continue
-   - If user picks C: show `git diff` and `git status`, then re-ask A or B
+   - If user picks C: delete the throwaway files (`rm <files>`) and continue
+   - If user picks D: show `git diff` and `git status`, then re-ask A/B/C
 
 4. **Detect already-merged branches:**
 
@@ -186,17 +187,35 @@ If conflicts appear:
 
 If already up to date, continue silently.
 
-**Post-sync empty-diff check:** After rebase/merge, verify the branch still has changes:
+---
+
+## Step 2.5: Post-Sync Gate — STOP if branch is dead
+
+**This is a hard gate. Do NOT continue past this step if the branch has no diff.**
+
+After rebase/merge, verify the branch still has changes:
 
 ```bash
 git diff --stat origin/<target>...HEAD
 ```
 
-If the diff is empty (all commits were dropped as already-upstream), check for uncommitted
-changes. If uncommitted changes exist, offer to move them to a new branch. If none exist,
-report "All branch commits already upstream. Nothing to ship." and **stop**.
+If the diff is **not empty**, continue to Step 3.
 
-This catches the case where Step 1 pre-flight didn't detect the merged state (e.g. the
+If the diff is **empty** (all commits were dropped as already-upstream), the branch
+is dead — it was already merged. **STOP** and follow one of these paths:
+
+1. **If uncommitted changes exist** (e.g. from autostash): use **AskUserQuestion**:
+   - **A) Move to a new branch** — create a new branch from `origin/<target>` with
+     these changes and restart `/ship` from Step 1
+   - **B) Abort** — stop shipping
+
+2. **If no uncommitted changes exist:**
+   Report "All branch commits already upstream. Nothing to ship." and **stop**.
+
+Do NOT continue shipping on the dead branch. Do NOT push it. Do NOT create a PR from it.
+Pushing a dead branch recreates a branch for a closed PR.
+
+This gate catches cases where Step 1 pre-flight didn't detect the merged state (e.g. the
 branch still existed on remote when Step 1 ran, but rebase revealed all content was upstream).
 
 ---
