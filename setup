@@ -61,6 +61,9 @@ done
 # One-time migration: remove setup-browser-cookies (merged into browse 1.1.4)
 rm -rf "$CLAUDE_SKILLS/setup-browser-cookies"
 
+# One-time migration: remove avad-qa-report (merged into avad-qa 1.1.4)
+rm -rf "$CLAUDE_SKILLS/avad-qa-report"
+
 # 4. Prune avadbot skills that no longer exist in source
 for installed_dir in "$CLAUDE_SKILLS"/*/; do
   skill_name="$(basename "$installed_dir")"
