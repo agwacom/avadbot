@@ -126,10 +126,29 @@ Generate it. Read the project's available context to infer the workflow:
    - If user picks B: `git stash push -u -m "ship: stashed unrelated changes"` and continue
    - If user picks C: show `git diff` and `git status`, then re-ask A or B
 
-4. Confirm the branch represents one logical change only.
+4. **Detect already-merged branches:**
+
+   ```bash
+   git ls-remote --heads origin <branch>
+   git diff --stat origin/<target>...HEAD
+   ```
+
+   If the branch does NOT exist on remote AND the diff against `<target>` is empty
+   (all commits already upstream), the branch was already merged and deleted.
+
+   In this case, check for uncommitted changes:
+   - **If uncommitted changes exist:** use **AskUserQuestion** with options:
+     - **A) Move to a new branch** — create a new branch from `origin/<target>` with these changes
+     - **B) Abort** — stop shipping
+   - **If no uncommitted changes:** report "Branch already merged via PR. Nothing to ship." and **stop**.
+
+   Do NOT offer "Commit and ship as-is" — the branch is dead, pushing to it would
+   recreate a branch for a closed PR.
+
+5. Confirm the branch represents one logical change only.
    If the branch history mixes unrelated work, stop and require splitting.
 
-5. Review the shipment scope:
+6. Review the shipment scope:
 
    ```bash
    git diff --stat origin/<target>...HEAD
@@ -157,6 +176,19 @@ If conflicts appear:
 - If conflicts are ambiguous or affect behavior, **stop** and show them
 
 If already up to date, continue silently.
+
+**Post-sync empty-diff check:** After rebase/merge, verify the branch still has changes:
+
+```bash
+git diff --stat origin/<target>...HEAD
+```
+
+If the diff is empty (all commits were dropped as already-upstream), check for uncommitted
+changes. If uncommitted changes exist, offer to move them to a new branch. If none exist,
+report "All branch commits already upstream. Nothing to ship." and **stop**.
+
+This catches the case where Step 1 pre-flight didn't detect the merged state (e.g. the
+branch still existed on remote when Step 1 ran, but rebase revealed all content was upstream).
 
 ---
 

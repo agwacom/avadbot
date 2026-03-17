@@ -2,6 +2,11 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [1.1.6] - 2026-03-17
+
+### Fixed
+- **avad-ship:** detect already-merged branches — pre-flight checks if branch was deleted from remote with empty diff; post-rebase check catches commits dropped as already-upstream. Prevents offering invalid "ship as-is" option on dead branches.
+
 ## [1.1.5] - 2026-03-17
 
 ### Changed
