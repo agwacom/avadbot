@@ -47,12 +47,12 @@ avadbot/
 │   ├── dev-setup                # Activate dev mode (symlink skills)
 │   └── dev-teardown             # Deactivate dev mode
 ├── skills/                      # All skills live here
-│   ├── avad-ship/               # /avad-ship — validate, review, push, PR
-│   ├── avad-review/             # /avad-review — pre-landing code review
-│   ├── avad-plan-ceo-review/    # /avad-plan-ceo-review — CEO plan review
-│   ├── avad-plan-eng-review/    # /avad-plan-eng-review — eng manager plan review
-│   ├── avad-qa/                 # /avad-qa — QA testing workflow
-│   ├── avad-retro/              # /avad-retro — weekly engineering retrospective
+│   ├── avad-ship/               # /avadbot:avad-ship — validate, review, push, PR
+│   ├── avad-review/             # /avadbot:avad-review — pre-landing code review
+│   ├── avad-plan-ceo-review/    # /avadbot:avad-plan-ceo-review — CEO plan review
+│   ├── avad-plan-eng-review/    # /avadbot:avad-plan-eng-review — eng manager plan review
+│   ├── avad-qa/                 # /avadbot:avad-qa — QA testing workflow
+│   ├── avad-retro/              # /avadbot:avad-retro — weekly engineering retrospective
 │   └── browse/                  # Headless browser CLI (Playwright)
 │       ├── src/                 # CLI + server + commands
 │       │   ├── commands.ts      # Command registry (single source of truth)
@@ -108,9 +108,9 @@ argument-hint: "optional usage hint"
 1. **Read the full skill first** — understand the existing structure before modifying.
 2. **Preserve frontmatter** — `name`, `description`, and `argument-hint` must stay accurate.
 3. **Keep supporting files consistent** — if a `SKILL.md` references `protocol.md` or `rules.md`, those files must exist and stay in sync.
-4. **Test the skill** — after editing, verify the skill loads correctly: check that `/skill-name` is recognized.
+4. **Test the skill** — after editing, verify the skill loads correctly: check that `/avadbot:skill-name` is recognized.
 5. **After renaming a skill** — audit the entire SKILL.md content for stale references to the old name. Replace all occurrences.
-6. **Sync after edit** — always sync to `~/.claude/skills/` after any change.
+6. **Sync after edit** — run `claude plugin update avadbot@avadbot-local` to refresh the plugin cache.
 
 ### When reviewing skills
 
@@ -128,12 +128,12 @@ Proactively flag:
 1. Create a skill directory under `skills/` with a `SKILL.md`.
 2. Keep it focused — one skill, one responsibility.
 3. Add supporting files only when the skill is complex enough to warrant separation.
-4. Run `./setup` to deploy to `~/.claude/skills/`.
+4. Run `claude plugin update avadbot@avadbot-local` to refresh the plugin cache.
 
 ## Browser interaction
 
 When you need to interact with a browser (QA, dogfooding, cookie setup), use the
-`/browse` skill or run the browse binary directly via `$B <command>`. NEVER use
+`/avadbot:browse` skill or run the browse binary directly via `$B <command>`. NEVER use
 `mcp__claude-in-chrome__*` tools — they are slow, unreliable, and not what this
 project uses.
 
@@ -141,35 +141,35 @@ project uses.
 
 Skills are stateless and designed for concurrent execution via Conductor.
 Each workspace maintains its own browser process, cookies, and logs — sessions
-do not share state. `/browse`, `/avad-qa`, `/avad-review`, and `/avad-ship`
+do not share state. `/avadbot:browse`, `/avadbot:avad-qa`, `/avadbot:avad-review`, and `/avadbot:avad-ship`
 can all run in parallel across separate workspaces without interference.
 
 ## Development modes
 
-### Dev mode (recommended for active development)
+### Plugin mode (default — installed via marketplace)
 
-Uses `bin/dev-setup` to create symlinks in `.claude/skills/`. Skills update immediately without restarting the session. Invoke as `/avad-review` (no namespace prefix).
+Skills are namespaced as `/avadbot:avad-review`. Requires session restart after any SKILL.md changes — there is no `/reload-plugins` command.
 
 ```bash
-bin/dev-setup       # symlinks skills into .claude/skills/ — changes are live
-bin/dev-teardown    # removes symlinks, restores global install
+claude plugin update avadbot@avadbot-local   # refresh plugin cache after changes
 ```
 
-### Plugin mode (for testing plugin structure)
+### Dev mode (for active development)
 
-Uses `claude --plugin-dir ./avadbot`. Skills are namespaced as `/avadbot:avad-review`. Requires session restart after any SKILL.md changes — there is no `/reload-plugins` command.
+Uses `bin/dev-setup` to create symlinks in `~/.claude/skills/`. Skills update immediately without restarting the session. Invoke as `/avad-review` (no namespace prefix).
 
-During active development, dev mode is faster. Plugin mode is for verifying the plugin structure works and for end users.
+```bash
+bin/dev-setup       # symlinks skills into ~/.claude/skills/ — changes are live
+bin/dev-teardown    # removes symlinks, restores plugin mode
+```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
-## Deploying to the active install
+## Deploying changes
 
-After making changes, deploy skills to `~/.claude/skills/`:
+**Plugin mode (primary):** Run `claude plugin update avadbot@avadbot-local` then restart session.
 
-```bash
-./setup    # copies all skill directories to ~/.claude/skills/
-```
+**Legacy fallback:** `./setup` copies skills to `~/.claude/skills/` for non-plugin users.
 
 ## Runtime data
 

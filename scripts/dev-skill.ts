@@ -28,7 +28,7 @@ function discoverTemplates(): Array<{ tmpl: string; output: string }> {
     if (fs.existsSync(tmplPath)) {
       templates.push({
         tmpl: tmplPath,
-        output: `${entry.name}/SKILL.md`,
+        output: `skills/${entry.name}/SKILL.md`,
       });
     }
   }
