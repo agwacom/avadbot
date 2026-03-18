@@ -2,6 +2,12 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.0.1] - 2026-03-18
+
+### Changed
+- Added `.avadbot/`, `.claude-plugin/`, `.DS_Store` to root `.gitignore`
+- Added hour0 plugin spike verification results to `doc/plan/`
+
 ## [2.0.0] - 2026-03-18
 
 ### Breaking
