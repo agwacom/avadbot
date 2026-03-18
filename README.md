@@ -150,13 +150,22 @@ For the full command reference, see [skills/browse/SKILL.md](skills/browse/SKILL
 
 ## Install
 
-### Plugin install (recommended)
+### Marketplace install (recommended)
+
+```bash
+claude plugin marketplace add agwacom/avadbot
+claude plugin install avadbot
+```
+
+Skills are auto-discovered and namespaced as `/avadbot:avad-review`, `/avadbot:browse`, etc.
+
+### Local plugin install
+
+If you have the repo cloned locally:
 
 ```bash
 claude --plugin-dir ./avadbot
 ```
-
-Skills are auto-discovered and namespaced as `/avadbot:avad-review`, `/avadbot:browse`, etc.
 
 ### Legacy install
 
