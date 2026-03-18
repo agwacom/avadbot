@@ -27,9 +27,11 @@ State persists between calls (cookies, tabs, login sessions).
 ```bash
 _ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 B=""
-# 1. Project-local plugin structure (new — post-migration)
+# 1. Project-local plugin structure (avadbot IS the project root)
 [ -n "$_ROOT" ] && [ -x "$_ROOT/skills/browse/dist/browse" ] && B="$_ROOT/skills/browse/dist/browse"
-# 2-5. Legacy cascade (unchanged from current codebase)
+# 1b. Plugin subdirectory (--plugin-dir ./avadbot from parent project)
+[ -z "$B" ] && [ -n "$_ROOT" ] && for _D in "$_ROOT"/*/skills/browse/dist/browse; do [ -x "$_D" ] && B="$_D" && break; done
+# 2-5. Legacy cascade
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/browse/dist/browse" ] && B="$_ROOT/.claude/skills/browse/dist/browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/browse/dist/browse" ] && B="$_ROOT/.claude/skills/avadbot/browse/dist/browse"
 [ -z "$B" ] && [ -x ~/.claude/skills/browse/dist/browse ] && B=~/.claude/skills/browse/dist/browse
