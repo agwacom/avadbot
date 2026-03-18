@@ -12,6 +12,7 @@
 set -e
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SKILLS_DIR="$REPO_ROOT"
 
 # 1. Copy .env from main worktree (if we're a worktree and don't have one)
 if [ ! -f "$REPO_ROOT/.env" ]; then
@@ -34,7 +35,7 @@ mkdir -p "$REPO_ROOT/.claude/skills"
 # 4. Symlink each skill directory into .claude/skills/
 # avadbot skills live as top-level dirs with SKILL.md inside them
 linked=()
-for skill_dir in "$REPO_ROOT"/*/; do
+for skill_dir in "$SKILLS_DIR"/*/; do
   [ -f "$skill_dir/SKILL.md" ] || continue
   skill_name="$(basename "$skill_dir")"
   link="$REPO_ROOT/.claude/skills/$skill_name"
@@ -49,6 +50,13 @@ for skill_dir in "$REPO_ROOT"/*/; do
   ln -s "$skill_dir" "$link"
   linked+=("$skill_name")
 done
+
+# Guard: ensure at least one skill was found
+if [ ${#linked[@]} -eq 0 ]; then
+  echo "ERROR: No skills found in $SKILLS_DIR/*/SKILL.md" >&2
+  echo "Expected: avad-ship, avad-review, avad-qa, browse, ..." >&2
+  exit 1
+fi
 
 echo ""
 echo "Dev mode active. Skills resolve from this working tree."

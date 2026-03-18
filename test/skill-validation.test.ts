@@ -18,6 +18,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
+const SKILLS_SCAN_DIR = ROOT;
 
 // All avadbot skills that contain $B browse commands
 const BROWSE_SKILLS = [
@@ -27,12 +28,12 @@ const BROWSE_SKILLS = [
 
 // Auto-discover all avadbot skills (dirs with SKILL.md)
 function discoverAllSkills(): Array<{ dir: string; name: string }> {
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_SCAN_DIR, { withFileTypes: true });
   const skills: Array<{ dir: string; name: string }> = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const skillPath = path.join(ROOT, entry.name, 'SKILL.md');
+    const skillPath = path.join(SKILLS_SCAN_DIR, entry.name, 'SKILL.md');
     if (!fs.existsSync(skillPath)) continue;
 
     const content = fs.readFileSync(skillPath, 'utf-8');
@@ -48,7 +49,7 @@ const ALL_SKILLS = discoverAllSkills();
 
 describe('SKILL.md command validation', () => {
   for (const skill of BROWSE_SKILLS) {
-    const skillPath = path.join(ROOT, skill.dir, 'SKILL.md');
+    const skillPath = path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md');
     if (!fs.existsSync(skillPath)) continue;
 
     test(`all $B commands in ${skill.name}/SKILL.md are valid`, () => {
@@ -101,14 +102,14 @@ describe('Command registry consistency', () => {
 describe('SKILL.md frontmatter validation', () => {
   for (const skill of ALL_SKILLS) {
     test(`${skill.name}/SKILL.md has valid YAML frontmatter`, () => {
-      const content = fs.readFileSync(path.join(ROOT, skill.dir, 'SKILL.md'), 'utf-8');
+      const content = fs.readFileSync(path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md'), 'utf-8');
       expect(content.startsWith('---\n')).toBe(true);
       expect(content).toContain('name:');
       expect(content).toContain('description:');
     });
 
     test(`${skill.dir}/SKILL.md frontmatter name matches directory name`, () => {
-      const content = fs.readFileSync(path.join(ROOT, skill.dir, 'SKILL.md'), 'utf-8');
+      const content = fs.readFileSync(path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md'), 'utf-8');
       const nameMatch = content.match(/^name:\s*(.+)$/m);
       expect(nameMatch).not.toBeNull();
       expect(nameMatch![1].trim()).toBe(skill.dir);
@@ -117,7 +118,7 @@ describe('SKILL.md frontmatter validation', () => {
 });
 
 describe('QA skill structure validation', () => {
-  const qaPath = path.join(ROOT, 'avad-qa', 'SKILL.md');
+  const qaPath = path.join(SKILLS_SCAN_DIR, 'avad-qa', 'SKILL.md');
   if (!fs.existsSync(qaPath)) return;
   const qaContent = fs.readFileSync(qaPath, 'utf-8');
 

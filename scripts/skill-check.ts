@@ -16,24 +16,25 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 
 const ROOT = path.resolve(import.meta.dir, '..');
+const SKILLS_SCAN_DIR = ROOT;
 
 let hasErrors = false;
 
 // ─── Auto-discover skills ───────────────────────────────────
 
 function discoverSkills(): Array<{ dir: string; name: string; hasTmpl: boolean }> {
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_SCAN_DIR, { withFileTypes: true });
   const skills: Array<{ dir: string; name: string; hasTmpl: boolean }> = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const skillPath = path.join(ROOT, entry.name, 'SKILL.md');
+    const skillPath = path.join(SKILLS_SCAN_DIR, entry.name, 'SKILL.md');
     if (!fs.existsSync(skillPath)) continue;
 
     const content = fs.readFileSync(skillPath, 'utf-8');
     const nameMatch = content.match(/^name:\s*(.+)$/m);
     const name = nameMatch ? nameMatch[1].trim() : entry.name;
-    const hasTmpl = fs.existsSync(path.join(ROOT, entry.name, 'SKILL.md.tmpl'));
+    const hasTmpl = fs.existsSync(path.join(SKILLS_SCAN_DIR, entry.name, 'SKILL.md.tmpl'));
 
     skills.push({ dir: entry.name, name, hasTmpl });
   }
@@ -43,11 +44,17 @@ function discoverSkills(): Array<{ dir: string; name: string; hasTmpl: boolean }
 
 const skills = discoverSkills();
 
+if (skills.length === 0) {
+  console.error(`ERROR: No skills found in ${SKILLS_SCAN_DIR}/*/SKILL.md`);
+  console.error('Expected: avad-ship, avad-review, avad-qa, browse, ...');
+  process.exit(1);
+}
+
 // ─── Frontmatter Validation ─────────────────────────────────
 
 console.log('  Frontmatter:');
 for (const skill of skills) {
-  const content = fs.readFileSync(path.join(ROOT, skill.dir, 'SKILL.md'), 'utf-8');
+  const content = fs.readFileSync(path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md'), 'utf-8');
   const issues: string[] = [];
 
   if (!content.startsWith('---\n')) issues.push('missing frontmatter');
@@ -71,7 +78,7 @@ for (const skill of skills) {
 
 console.log('\n  Browse commands:');
 for (const skill of skills) {
-  const skillPath = path.join(ROOT, skill.dir, 'SKILL.md');
+  const skillPath = path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md');
   const result = validateSkill(skillPath);
 
   if (result.warnings.length > 0) {
@@ -102,7 +109,7 @@ for (const skill of skills) {
 console.log('\n  Templates:');
 for (const skill of skills) {
   if (skill.hasTmpl) {
-    const outPath = path.join(ROOT, skill.dir, 'SKILL.md');
+    const outPath = path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md');
     if (!fs.existsSync(outPath)) {
       hasErrors = true;
       console.log(`  \u274c ${skill.dir.padEnd(30)} \u2014 .tmpl exists but SKILL.md missing! Run: bun run gen:skill-docs`);
@@ -119,7 +126,7 @@ for (const skill of skills) {
 console.log('\n  Dead references:');
 let deadRefCount = 0;
 for (const skill of skills) {
-  const skillPath = path.join(ROOT, skill.dir, 'SKILL.md');
+  const skillPath = path.join(SKILLS_SCAN_DIR, skill.dir, 'SKILL.md');
   const content = fs.readFileSync(skillPath, 'utf-8');
 
   // Find relative file references — must end with a file extension (e.g., .md, .ts, .json)
@@ -127,7 +134,7 @@ for (const skill of skills) {
   for (const m of refMatches) {
     const ref = m[1];
     // Try resolving relative to skill dir first, then ROOT
-    const fromSkill = path.join(ROOT, skill.dir, ref);
+    const fromSkill = path.join(SKILLS_SCAN_DIR, skill.dir, ref);
     const fromRoot = path.join(ROOT, ref);
     if (!fs.existsSync(fromSkill) && !fs.existsSync(fromRoot)) {
       if (!ref.includes('://') && !ref.startsWith('http') && !ref.includes('.com/')) {

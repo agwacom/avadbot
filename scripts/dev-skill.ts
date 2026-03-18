@@ -12,16 +12,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
+const SKILLS_SCAN_DIR = ROOT;
+const BROWSE_COMMANDS_PATH = path.join(ROOT, 'browse', 'src', 'commands.ts');
+const BROWSE_SNAPSHOT_PATH = path.join(ROOT, 'browse', 'src', 'snapshot.ts');
 
 // ─── Auto-discover templates ────────────────────────────────
 
 function discoverTemplates(): Array<{ tmpl: string; output: string }> {
   const templates: Array<{ tmpl: string; output: string }> = [];
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_SCAN_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const tmplPath = path.join(ROOT, entry.name, 'SKILL.md.tmpl');
+    const tmplPath = path.join(SKILLS_SCAN_DIR, entry.name, 'SKILL.md.tmpl');
     if (fs.existsSync(tmplPath)) {
       templates.push({
         tmpl: tmplPath,
@@ -89,8 +92,8 @@ for (const { tmpl } of TEMPLATES) {
 
 // Watch source files (browse command registry)
 const SOURCE_FILES = [
-  path.join(ROOT, 'browse', 'src', 'commands.ts'),
-  path.join(ROOT, 'browse', 'src', 'snapshot.ts'),
+  BROWSE_COMMANDS_PATH,
+  BROWSE_SNAPSHOT_PATH,
 ];
 
 for (const src of SOURCE_FILES) {

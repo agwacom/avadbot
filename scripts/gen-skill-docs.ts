@@ -15,6 +15,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
+const SKILLS_SCAN_DIR = ROOT;
+const TEMPLATES_SCAN_DIR = ROOT;
 const DRY_RUN = process.argv.includes('--dry-run');
 
 // ─── Placeholder Resolvers ──────────────────────────────────
@@ -131,7 +133,7 @@ function generateSkillList(): string {
   ];
 
   for (const skillDir of skills) {
-    const skillPath = path.join(ROOT, skillDir, 'SKILL.md');
+    const skillPath = path.join(SKILLS_SCAN_DIR, skillDir, 'SKILL.md');
     if (!fs.existsSync(skillPath)) continue;
 
     const content = fs.readFileSync(skillPath, 'utf-8');
@@ -160,28 +162,28 @@ const RESOLVERS: Record<string, () => string> = {
 // ─── Template Discovery ─────────────────────────────────────
 
 function discoverSkills(): string[] {
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_SCAN_DIR, { withFileTypes: true });
   return entries
-    .filter(e => e.isDirectory() && fs.existsSync(path.join(ROOT, e.name, 'SKILL.md')))
+    .filter(e => e.isDirectory() && fs.existsSync(path.join(SKILLS_SCAN_DIR, e.name, 'SKILL.md')))
     .map(e => e.name)
     .sort();
 }
 
 function discoverTemplates(): string[] {
   const templates: string[] = [];
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(TEMPLATES_SCAN_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
     if (!entry.isDirectory()) {
       // Root-level template
       if (entry.name.endsWith('.tmpl')) {
-        templates.push(path.join(ROOT, entry.name));
+        templates.push(path.join(TEMPLATES_SCAN_DIR, entry.name));
       }
       continue;
     }
 
     // Skill directory template
-    const tmplPath = path.join(ROOT, entry.name, 'SKILL.md.tmpl');
+    const tmplPath = path.join(TEMPLATES_SCAN_DIR, entry.name, 'SKILL.md.tmpl');
     if (fs.existsSync(tmplPath)) {
       templates.push(tmplPath);
     }
