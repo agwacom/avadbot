@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "setup": "bin/dev-setup",
-    "archive": "bin/dev-teardown"
+    "setup": "bun install && bun run build"
   }
 }

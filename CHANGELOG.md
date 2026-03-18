@@ -2,6 +2,26 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.0.0] - 2026-03-18
+
+### Breaking
+- Converted from skill suite to Claude Code Plugin
+- Skills now under `skills/` directory (was root level)
+- Browse binary discovery adds project-local and marketplace fallback paths
+
+### Added
+- `.claude-plugin/plugin.json` manifest
+- Plugin auto-discovery (no manual setup required)
+- Marketplace install path in browse discovery cascade
+- Pre-migration count assertions in setup scripts
+- plugin.json validation in test suite
+
+### Changed
+- `setup` script updated for `skills/` directory structure
+- `bin/dev-setup` symlink paths updated
+- `conductor.json` simplified to `bun install && bun run build`
+- Glob patterns extracted to named variables across all scripts
+
 ## [1.1.8] - 2026-03-17
 
 ### Changed

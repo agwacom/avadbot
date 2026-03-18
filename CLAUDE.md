@@ -31,59 +31,63 @@ to `~/.avadbot/evals/` with auto-comparison against the previous run.
 
 ```
 avadbot/
-├── CLAUDE.md                # This file — project instructions
-├── README.md                # Documentation
-├── CHANGELOG.md             # Change log
-├── CONTRIBUTING.md          # Dev workflow, testing, evals
-├── LICENSE                  # MIT license
-├── package.json             # Build scripts
-├── bun.lock                 # Lock file
-├── conductor.json           # Conductor workspace hooks
-├── setup                    # Install script — copies skills to ~/.claude/skills/
-├── .env.example             # API key template
-├── bin/                     # Dev mode scripts
-│   ├── dev-setup            # Activate dev mode (symlink skills)
-│   └── dev-teardown         # Deactivate dev mode
-├── avad-ship/               # /avad-ship — validate, review, push, PR
-├── avad-review/             # /avad-review — pre-landing code review
-├── avad-plan-ceo-review/    # /avad-plan-ceo-review — CEO plan review
-├── avad-plan-eng-review/    # /avad-plan-eng-review — eng manager plan review
-├── avad-qa/                 # /avad-qa — QA testing workflow (test + fix + report-only)
-├── avad-retro/              # /avad-retro — weekly engineering retrospective
-├── browse/                  # Headless browser CLI (Playwright)
-│   ├── src/                 # CLI + server + commands
-│   │   ├── commands.ts      # Command registry (single source of truth)
-│   │   └── snapshot.ts      # SNAPSHOT_FLAGS metadata array
-│   ├── test/                # Integration tests + fixtures
-│   └── dist/                # Compiled binary
-├── scripts/                 # Build + DX tooling
-│   ├── gen-skill-docs.ts    # Template → SKILL.md generator
-│   ├── skill-check.ts       # Health dashboard
-│   ├── dev-skill.ts         # Watch mode
-│   ├── eval-compare.ts      # Compare two eval runs
-│   ├── eval-list.ts         # List eval runs
-│   ├── eval-summary.ts      # Aggregate eval stats
-│   └── eval-watch.ts        # Live E2E dashboard
-└── test/                    # Skill validation + eval tests
-    ├── helpers/             # skill-parser.ts, session-runner.ts, llm-judge.ts, eval-store.ts
-    ├── fixtures/            # Ground truth JSON, planted-bug fixtures, eval baselines
-    ├── skill-validation.test.ts  # Tier 1: static validation (free, <1s)
-    ├── skill-parser.test.ts      # Tier 1: parser unit tests (free, <1s)
-    ├── gen-skill-docs.test.ts    # Tier 1: generator quality (free, <1s)
-    ├── skill-e2e.test.ts         # Tier 2: E2E via claude -p (~$3.85/run)
-    └── skill-llm-eval.test.ts    # Tier 3: LLM-as-judge (~$0.15/run)
+├── .claude-plugin/
+│   └── plugin.json              # Plugin manifest (v2.0.0)
+├── CLAUDE.md                    # This file — project instructions
+├── README.md                    # Documentation
+├── CHANGELOG.md                 # Change log
+├── CONTRIBUTING.md              # Dev workflow, testing, evals
+├── LICENSE                      # MIT license
+├── package.json                 # Build scripts
+├── bun.lock                     # Lock file
+├── conductor.json               # Conductor workspace hooks
+├── setup                        # Install script — copies skills to ~/.claude/skills/
+├── .env.example                 # API key template
+├── bin/                         # Dev mode scripts
+│   ├── dev-setup                # Activate dev mode (symlink skills)
+│   └── dev-teardown             # Deactivate dev mode
+├── skills/                      # All skills live here
+│   ├── avad-ship/               # /avad-ship — validate, review, push, PR
+│   ├── avad-review/             # /avad-review — pre-landing code review
+│   ├── avad-plan-ceo-review/    # /avad-plan-ceo-review — CEO plan review
+│   ├── avad-plan-eng-review/    # /avad-plan-eng-review — eng manager plan review
+│   ├── avad-qa/                 # /avad-qa — QA testing workflow
+│   ├── avad-retro/              # /avad-retro — weekly engineering retrospective
+│   └── browse/                  # Headless browser CLI (Playwright)
+│       ├── src/                 # CLI + server + commands
+│       │   ├── commands.ts      # Command registry (single source of truth)
+│       │   └── snapshot.ts      # SNAPSHOT_FLAGS metadata array
+│       ├── test/                # Integration tests + fixtures
+│       └── dist/                # Compiled binary
+├── references/                  # Shared references (qa-methodology.md)
+├── scripts/                     # Build + DX tooling
+│   ├── gen-skill-docs.ts        # Template → SKILL.md generator
+│   ├── skill-check.ts           # Health dashboard
+│   ├── dev-skill.ts             # Watch mode
+│   ├── eval-compare.ts          # Compare two eval runs
+│   ├── eval-list.ts             # List eval runs
+│   ├── eval-summary.ts          # Aggregate eval stats
+│   └── eval-watch.ts            # Live E2E dashboard
+└── test/                        # Skill validation + eval tests
+    ├── helpers/                 # skill-parser.ts, session-runner.ts, llm-judge.ts, eval-store.ts
+    ├── fixtures/                # Ground truth JSON, planted-bug fixtures, eval baselines
+    ├── skill-validation.test.ts # Tier 1: static validation (free, <1s)
+    ├── skill-parser.test.ts     # Tier 1: parser unit tests (free, <1s)
+    ├── gen-skill-docs.test.ts   # Tier 1: generator quality (free, <1s)
+    ├── skill-e2e.test.ts        # Tier 2: E2E via claude -p (~$3.85/run)
+    └── skill-llm-eval.test.ts   # Tier 3: LLM-as-judge (~$0.15/run)
 ```
 
 ## SKILL.md workflow
 
 SKILL.md files are **generated** from `.tmpl` templates. To update docs:
 
-1. Edit the `.tmpl` file (e.g. `avad-review/SKILL.md.tmpl` or `browse/SKILL.md.tmpl`)
+1. Edit the `.tmpl` file in `skills/<name>/` (e.g. `skills/avad-review/SKILL.md.tmpl` or `skills/browse/SKILL.md.tmpl`)
 2. Run `bun run gen:skill-docs` (or `bun run build` which does it automatically)
 3. Commit both the `.tmpl` and generated `.md` files
 
-To add a new browse command: add it to `browse/src/commands.ts` and rebuild.
-To add a snapshot flag: add it to `SNAPSHOT_FLAGS` in `browse/src/snapshot.ts` and rebuild.
+To add a new browse command: add it to `skills/browse/src/commands.ts` and rebuild.
+To add a snapshot flag: add it to `SNAPSHOT_FLAGS` in `skills/browse/src/snapshot.ts` and rebuild.
 
 ## Skill development guidelines
 
@@ -121,7 +125,7 @@ Proactively flag:
 
 ### When creating new skills
 
-1. Create a skill directory at the repo root with a `SKILL.md`. Skills must be at the top level — nested packages are not discovered by Claude Code.
+1. Create a skill directory under `skills/` with a `SKILL.md`.
 2. Keep it focused — one skill, one responsibility.
 3. Add supporting files only when the skill is complex enough to warrant separation.
 4. Run `./setup` to deploy to `~/.claude/skills/`.
@@ -140,14 +144,22 @@ Each workspace maintains its own browser process, cookies, and logs — sessions
 do not share state. `/browse`, `/avad-qa`, `/avad-review`, and `/avad-ship`
 can all run in parallel across separate workspaces without interference.
 
-## Dev mode
+## Development modes
 
-For rapid skill development without copying files:
+### Dev mode (recommended for active development)
+
+Uses `bin/dev-setup` to create symlinks in `.claude/skills/`. Skills update immediately without restarting the session. Invoke as `/avad-review` (no namespace prefix).
 
 ```bash
 bin/dev-setup       # symlinks skills into .claude/skills/ — changes are live
 bin/dev-teardown    # removes symlinks, restores global install
 ```
+
+### Plugin mode (for testing plugin structure)
+
+Uses `claude --plugin-dir ./avadbot`. Skills are namespaced as `/avadbot:avad-review`. Requires session restart after any SKILL.md changes — there is no `/reload-plugins` command.
+
+During active development, dev mode is faster. Plugin mode is for verifying the plugin structure works and for end users.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 

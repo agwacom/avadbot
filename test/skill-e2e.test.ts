@@ -11,7 +11,7 @@ import type { SkillTestResult } from './helpers/session-runner';
 import { outcomeJudge } from './helpers/llm-judge';
 import { EvalCollector } from './helpers/eval-store';
 import type { EvalTestEntry } from './helpers/eval-store';
-import { startTestServer } from '../browse/test/test-server';
+import { startTestServer } from '../skills/browse/test/test-server';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -48,7 +48,7 @@ function recordE2E(name: string, suite: string, result: SkillTestResult, extra?:
 
 let testServer: ReturnType<typeof startTestServer>;
 let tmpDir: string;
-const browseBin = path.resolve(ROOT, 'browse', 'dist', 'browse');
+const browseBin = path.resolve(ROOT, 'skills', 'browse', 'dist', 'browse');
 
 function copyDirSync(src: string, dest: string) {
   fs.mkdirSync(dest, { recursive: true });
@@ -177,7 +177,7 @@ describeE2E('avad-qa E2E', () => {
     testServer = testServer || startTestServer();
     qaDir = fs.mkdtempSync(path.join(os.tmpdir(), 'avadbot-e2e-qa-'));
     setupBrowseShims(qaDir);
-    copyDirSync(path.join(ROOT, 'avad-qa'), path.join(qaDir, 'avad-qa'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-qa'), path.join(qaDir, 'avad-qa'));
     fs.mkdirSync(path.join(qaDir, 'qa-reports'), { recursive: true });
   });
 
@@ -236,7 +236,7 @@ describeE2E('avad-review E2E', () => {
     run('git', ['add', 'user_controller.rb']);
     run('git', ['commit', '-m', 'add user controller']);
 
-    copyDirSync(path.join(ROOT, 'avad-review'), path.join(reviewDir, 'avad-review'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-review'), path.join(reviewDir, 'avad-review'));
   });
 
   afterAll(() => {
@@ -275,7 +275,7 @@ describeOutcome('Planted-bug outcome evals', () => {
     testServer = startTestServer();
     outcomeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'avadbot-e2e-outcome-'));
     setupBrowseShims(outcomeDir);
-    copyDirSync(path.join(ROOT, 'avad-qa'), path.join(outcomeDir, 'avad-qa'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-qa'), path.join(outcomeDir, 'avad-qa'));
   });
 
   afterAll(() => {
@@ -433,7 +433,7 @@ We're building a new user dashboard that shows recent activity, notifications, a
     run('git', ['add', '.']);
     run('git', ['commit', '-m', 'add plan']);
 
-    copyDirSync(path.join(ROOT, 'avad-plan-ceo-review'), path.join(planDir, 'avad-plan-ceo-review'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-plan-ceo-review'), path.join(planDir, 'avad-plan-ceo-review'));
   });
 
   afterAll(() => {
@@ -501,7 +501,7 @@ Replace session-cookie auth with JWT tokens. Currently using express-session + R
     run('git', ['add', '.']);
     run('git', ['commit', '-m', 'add plan']);
 
-    copyDirSync(path.join(ROOT, 'avad-plan-eng-review'), path.join(planDir, 'avad-plan-eng-review'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-plan-eng-review'), path.join(planDir, 'avad-plan-eng-review'));
   });
 
   afterAll(() => {
@@ -569,7 +569,7 @@ describeE2E('avad-retro E2E', () => {
     run('git', ['add', 'api.ts']);
     run('git', ['commit', '-m', 'feat: add users API endpoint', '--date', '2026-03-12T09:30:00']);
 
-    copyDirSync(path.join(ROOT, 'avad-retro'), path.join(retroDir, 'avad-retro'));
+    copyDirSync(path.join(ROOT, 'skills', 'avad-retro'), path.join(retroDir, 'avad-retro'));
   });
 
   afterAll(() => {

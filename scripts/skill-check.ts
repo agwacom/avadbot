@@ -16,7 +16,7 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 
 const ROOT = path.resolve(import.meta.dir, '..');
-const SKILLS_SCAN_DIR = ROOT;
+const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
 
 let hasErrors = false;
 

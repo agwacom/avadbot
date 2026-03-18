@@ -9,14 +9,14 @@
  * Used by skill:check and CI freshness checks.
  */
 
-import { COMMAND_DESCRIPTIONS } from '../browse/src/commands';
-import { SNAPSHOT_FLAGS } from '../browse/src/snapshot';
+import { COMMAND_DESCRIPTIONS } from '../skills/browse/src/commands';
+import { SNAPSHOT_FLAGS } from '../skills/browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
-const SKILLS_SCAN_DIR = ROOT;
-const TEMPLATES_SCAN_DIR = ROOT;
+const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
+const TEMPLATES_SCAN_DIR = path.join(ROOT, 'skills');
 const DRY_RUN = process.argv.includes('--dry-run');
 
 // ─── Placeholder Resolvers ──────────────────────────────────
@@ -99,10 +99,15 @@ function generateBrowseSetup(): string {
 \`\`\`bash
 _ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/browse/dist/browse" ] && B="$_ROOT/.claude/skills/browse/dist/browse"
-[ -z "$B" ] && [ -x "$_ROOT/.claude/skills/avadbot/browse/dist/browse" ] && B="$_ROOT/.claude/skills/avadbot/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/browse/dist/browse
-[ -z "$B" ] && B=~/.claude/skills/avadbot/browse/dist/browse
+# 1. Project-local plugin structure (new — post-migration)
+[ -n "$_ROOT" ] && [ -x "$_ROOT/skills/browse/dist/browse" ] && B="$_ROOT/skills/browse/dist/browse"
+# 2-5. Legacy cascade (unchanged from current codebase)
+[ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/browse/dist/browse" ] && B="$_ROOT/.claude/skills/browse/dist/browse"
+[ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/browse/dist/browse" ] && B="$_ROOT/.claude/skills/avadbot/browse/dist/browse"
+[ -z "$B" ] && [ -x ~/.claude/skills/browse/dist/browse ] && B=~/.claude/skills/browse/dist/browse
+[ -z "$B" ] && [ -x ~/.claude/skills/avadbot/browse/dist/browse ] && B=~/.claude/skills/avadbot/browse/dist/browse
+# 6. Marketplace plugin install (new)
+[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/browse/dist/browse; do [ -x "$_P" ] && B="$_P" && break; done
 if [ -x "$B" ]; then
   echo "READY: $B"
 else

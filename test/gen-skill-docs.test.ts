@@ -10,25 +10,27 @@
  */
 
 import { describe, test, expect } from 'bun:test';
-import { ALL_COMMANDS, COMMAND_DESCRIPTIONS } from '../browse/src/commands';
-import { SNAPSHOT_FLAGS } from '../browse/src/snapshot';
+import { ALL_COMMANDS, COMMAND_DESCRIPTIONS } from '../skills/browse/src/commands';
+import { SNAPSHOT_FLAGS } from '../skills/browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
 const ROOT = path.resolve(import.meta.dir, '..');
 
+const SKILLS_DIR = path.join(ROOT, 'skills');
+
 function discoverTemplates(): Array<{ tmpl: string; output: string; dir: string }> {
   const templates: Array<{ tmpl: string; output: string; dir: string }> = [];
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    const tmplPath = path.join(ROOT, entry.name, 'SKILL.md.tmpl');
+    const tmplPath = path.join(SKILLS_DIR, entry.name, 'SKILL.md.tmpl');
     if (fs.existsSync(tmplPath)) {
       templates.push({
         tmpl: tmplPath,
-        output: path.join(ROOT, entry.name, 'SKILL.md'),
+        output: path.join(SKILLS_DIR, entry.name, 'SKILL.md'),
         dir: entry.name,
       });
     }
@@ -38,9 +40,9 @@ function discoverTemplates(): Array<{ tmpl: string; output: string; dir: string 
 }
 
 function discoverAllSkills(): string[] {
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
   return entries
-    .filter(e => e.isDirectory() && fs.existsSync(path.join(ROOT, e.name, 'SKILL.md')))
+    .filter(e => e.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, e.name, 'SKILL.md')))
     .map(e => e.name)
     .sort();
 }
@@ -79,6 +81,21 @@ describe('Template generation output', () => {
   }
 });
 
+describe('Browse setup cascade', () => {
+  for (const tmpl of TEMPLATES) {
+    const outputContent = fs.existsSync(tmpl.output) ? fs.readFileSync(tmpl.output, 'utf-8') : '';
+    if (!outputContent.includes('SETUP')) continue;
+
+    test(`${tmpl.dir}/SKILL.md has project-local path as first tier`, () => {
+      expect(outputContent).toContain('$_ROOT/skills/browse/dist/browse');
+    });
+
+    test(`${tmpl.dir}/SKILL.md has marketplace path as final tier`, () => {
+      expect(outputContent).toContain('~/.claude/plugins/*/skills/browse/dist/browse');
+    });
+  }
+});
+
 describe('Freshness check', () => {
   test('generated files match --dry-run output', () => {
     try {
@@ -93,7 +110,7 @@ describe('Freshness check', () => {
 
 describe('Command reference quality', () => {
   // Only run if browse/SKILL.md exists (has COMMAND_REFERENCE)
-  const browsePath = path.join(ROOT, 'browse', 'SKILL.md');
+  const browsePath = path.join(SKILLS_DIR, 'browse', 'SKILL.md');
   if (!fs.existsSync(browsePath)) return;
   const browseContent = fs.readFileSync(browsePath, 'utf-8');
 
@@ -152,7 +169,7 @@ describe('Command reference quality', () => {
 });
 
 describe('Snapshot flags quality', () => {
-  const browsePath = path.join(ROOT, 'browse', 'SKILL.md');
+  const browsePath = path.join(SKILLS_DIR, 'browse', 'SKILL.md');
   if (!fs.existsSync(browsePath)) return;
   const browseContent = fs.readFileSync(browsePath, 'utf-8');
 

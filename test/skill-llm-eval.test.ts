@@ -37,7 +37,7 @@ describeEval('Skill documentation quality evals', () => {
   for (const skill of SKILLS_TO_EVAL) {
     test(`${skill.name}/SKILL.md scores >= 3 on all dimensions`, async () => {
       const t0 = Date.now();
-      const content = fs.readFileSync(path.join(ROOT, skill.dir, 'SKILL.md'), 'utf-8');
+      const content = fs.readFileSync(path.join(ROOT, 'skills', skill.dir, 'SKILL.md'), 'utf-8');
 
       const scores = await judge(`${skill.name} skill reference`, content);
       console.log(`${skill.name} scores:`, JSON.stringify(scores, null, 2));
@@ -62,7 +62,7 @@ describeEval('Skill documentation quality evals', () => {
 
 // Browse-specific quality evals (command reference, snapshot flags)
 describeEval('Browse documentation quality evals', () => {
-  const browseSkillPath = path.join(ROOT, 'browse', 'SKILL.md');
+  const browseSkillPath = path.join(ROOT, 'skills', 'browse', 'SKILL.md');
   if (!fs.existsSync(browseSkillPath)) return;
   const browseContent = fs.readFileSync(browseSkillPath, 'utf-8');
 
@@ -121,7 +121,7 @@ describeEval('Browse documentation quality evals', () => {
 
 // QA skill quality evals
 describeEval('QA skill quality evals', () => {
-  const qaPath = path.join(ROOT, 'avad-qa', 'SKILL.md');
+  const qaPath = path.join(ROOT, 'skills', 'avad-qa', 'SKILL.md');
   if (!fs.existsSync(qaPath)) return;
   const qaContent = fs.readFileSync(qaPath, 'utf-8');
 
@@ -218,7 +218,7 @@ describeEval('Baseline score pinning', () => {
     const baselines = JSON.parse(fs.readFileSync(baselinesPath, 'utf-8'));
     const regressions: string[] = [];
 
-    const browseSkillPath = path.join(ROOT, 'browse', 'SKILL.md');
+    const browseSkillPath = path.join(ROOT, 'skills', 'browse', 'SKILL.md');
     if (!fs.existsSync(browseSkillPath)) return;
     const skillContent = fs.readFileSync(browseSkillPath, 'utf-8');
 

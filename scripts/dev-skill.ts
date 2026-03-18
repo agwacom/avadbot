@@ -12,9 +12,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
-const SKILLS_SCAN_DIR = ROOT;
-const BROWSE_COMMANDS_PATH = path.join(ROOT, 'browse', 'src', 'commands.ts');
-const BROWSE_SNAPSHOT_PATH = path.join(ROOT, 'browse', 'src', 'snapshot.ts');
+const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
+const BROWSE_COMMANDS_PATH = path.join(ROOT, 'skills', 'browse', 'src', 'commands.ts');
+const BROWSE_SNAPSHOT_PATH = path.join(ROOT, 'skills', 'browse', 'src', 'snapshot.ts');
 
 // ─── Auto-discover templates ────────────────────────────────
 

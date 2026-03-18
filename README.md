@@ -146,21 +146,24 @@ $B is visible ".success-toast"
 $B is enabled "#submit-btn"
 ```
 
-For the full command reference, see [browse/SKILL.md](browse/SKILL.md).
+For the full command reference, see [skills/browse/SKILL.md](skills/browse/SKILL.md).
 
 ## Install
 
-Skills live under `~/.claude/skills/`. Copy each skill directory there:
+### Plugin install (recommended)
 
 ```bash
-# From the avadbot directory
-cp -r avad-ship ~/.claude/skills/
-cp -r avad-review ~/.claude/skills/
-cp -r avad-plan-ceo-review ~/.claude/skills/
-cp -r avad-plan-eng-review ~/.claude/skills/
-cp -r avad-qa ~/.claude/skills/
-cp -r avad-retro ~/.claude/skills/
-cp -r browse ~/.claude/skills/
+claude --plugin-dir ./avadbot
+```
+
+Skills are auto-discovered and namespaced as `/avadbot:avad-review`, `/avadbot:browse`, etc.
+
+### Legacy install
+
+Use the setup script to copy skills to `~/.claude/skills/`:
+
+```bash
+./setup
 ```
 
 Add to your `~/.claude/CLAUDE.md`:
@@ -169,6 +172,20 @@ Add to your `~/.claude/CLAUDE.md`:
 ## avadbot
 
 Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /browse
+```
+
+### Migrating from legacy install
+
+If you previously installed avadbot via `./setup`, remove the legacy skills after confirming the plugin works to avoid duplicate skill entries:
+
+```bash
+rm -rf ~/.claude/skills/avad-plan-ceo-review
+rm -rf ~/.claude/skills/avad-plan-eng-review
+rm -rf ~/.claude/skills/avad-review
+rm -rf ~/.claude/skills/avad-ship
+rm -rf ~/.claude/skills/avad-qa
+rm -rf ~/.claude/skills/avad-retro
+rm -rf ~/.claude/skills/browse
 ```
 
 ## Per-project data

@@ -12,13 +12,13 @@
 
 import { describe, test, expect } from 'bun:test';
 import { validateSkill, extractWeightsFromTable } from './helpers/skill-parser';
-import { ALL_COMMANDS, COMMAND_DESCRIPTIONS, READ_COMMANDS, WRITE_COMMANDS, META_COMMANDS } from '../browse/src/commands';
-import { SNAPSHOT_FLAGS } from '../browse/src/snapshot';
+import { ALL_COMMANDS, COMMAND_DESCRIPTIONS, READ_COMMANDS, WRITE_COMMANDS, META_COMMANDS } from '../skills/browse/src/commands';
+import { SNAPSHOT_FLAGS } from '../skills/browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
-const SKILLS_SCAN_DIR = ROOT;
+const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
 
 // All avadbot skills that contain $B browse commands
 const BROWSE_SKILLS = [
@@ -162,5 +162,14 @@ describe('Planted-bug fixture validation', () => {
     const content = fs.readFileSync(path.join(ROOT, 'test', 'fixtures', 'review-eval-vuln.rb'), 'utf-8');
     expect(content).toContain('params[:id]');
     expect(content).toContain('update_column');
+  });
+});
+
+describe('plugin.json validation', () => {
+  test('plugin.json is valid', () => {
+    const raw = fs.readFileSync(path.join(ROOT, '.claude-plugin', 'plugin.json'), 'utf-8');
+    const manifest = JSON.parse(raw);
+    expect(manifest.name).toBeTruthy();
+    expect(manifest.version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 });
