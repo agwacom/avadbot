@@ -32,7 +32,8 @@ to `~/.avadbot/evals/` with auto-comparison against the previous run.
 ```
 avadbot/
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin manifest (v2.0.0)
+│   ├── plugin.json              # Plugin manifest (v2.0.1)
+│   └── marketplace.json         # Marketplace discovery manifest
 ├── CLAUDE.md                    # This file — project instructions
 ├── README.md                    # Documentation
 ├── CHANGELOG.md                 # Change log

@@ -1,0 +1,20 @@
+{
+  "name": "agwacom-avadbot",
+  "owner": {
+    "name": "Naif",
+    "email": "naif@agwa.com"
+  },
+  "plugins": [
+    {
+      "name": "avadbot",
+      "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, browser automation, and engineering retrospectives. Works with any project, any language, any framework.",
+      "version": "2.0.1",
+      "author": {
+        "name": "Naif",
+        "email": "naif@agwa.com"
+      },
+      "source": "./.",
+      "category": "productivity"
+    }
+  ]
+}

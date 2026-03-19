@@ -4,9 +4,12 @@ All notable changes to avadbot will be documented in this file.
 
 ## [2.0.1] - 2026-03-18
 
+### Fixed
+- Synced `plugin.json` version to 2.0.1
+- Fixed plugin namespace references in dev-skill.ts validation
+
 ### Changed
-- Added `.avadbot/`, `.claude-plugin/`, `.DS_Store` to root `.gitignore`
-- Added hour0 plugin spike verification results to `doc/plan/`
+- Regenerated SKILL.md files with updated browse discovery cascade
 
 ## [2.0.0] - 2026-03-18
 
@@ -55,7 +58,7 @@ All notable changes to avadbot will be documented in this file.
 - **Merged `setup-browser-cookies` into `browse`** — cookie import now available via `$B cookie-import-browser`, documented in browse's new Cookie Import Workflow section. No functionality removed.
 - **Setup prune logic** — `./setup` now marks installed skills with `.avadbot-managed` and auto-removes skills that were previously installed by avadbot but no longer exist in source. Third-party skills are left untouched.
 
-## 2026-03-16
+## [1.1.3] - 2026-03-16
 
 ### Added
 - **`/avad-qa` report-only mode** — merged `/avad-qa-report` into `/avad-qa`. Report-only mode now built in via AskUserQuestion gate after Phase 6, or `--report-only` flag.
