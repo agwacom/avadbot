@@ -2,6 +2,15 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.0.2] - 2026-03-19
+
+### Changed
+- **All 7 skills now use SKILL.md.tmpl** — converted avad-review, avad-ship, avad-retro, avad-plan-ceo-review, avad-plan-eng-review to template workflow. `{{VERSION}}` placeholder auto-syncs version from package.json across all skills.
+
+### Added
+- **gstack v0.7.0 sync report** — 48 items classified (17 direct ports, 19 adaptations, 7 skips, 2 conflicts). Report at `sync/sync-2026-03-19-0505.md`.
+- **Plan doc** for merging avad-plan-ceo-review + avad-plan-eng-review into unified avad-plan-review
+
 ## [2.0.1] - 2026-03-18
 
 ### Fixed
