@@ -1,6 +1,6 @@
 ---
 name: avad-retro
-version: 2.1.0
+version: 2.2.0
 description: |
   Weekly engineering retrospective. Analyzes commit history, work patterns,
   and code quality metrics with persistent history and trend tracking.

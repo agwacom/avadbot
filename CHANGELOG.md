@@ -2,6 +2,21 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.2.0] - 2026-03-19
+
+### Added
+- **avad-qa: Phase 8e.5 Regression Test Generation** — after fixing and verifying a bug, auto-generates a regression test matching the project's existing patterns. Traces the bug's codepath, tests the precondition, uses auto-incrementing filenames.
+- **avad-qa: QA report template** — new sections: Fixes Applied (with before/after evidence), Regression Tests (with deferred test specs), Ship Readiness (health score delta summary).
+- **avad-review: Scope Drift Detection (Step 2.5)** — checks TODOS.md + commit messages for stated intent vs actual diff. Flags scope creep and missing requirements.
+- **avad-review: Enum & Value Completeness** — Pass 1 CRITICAL now reads outside the diff when new enum/status/tier values are introduced.
+- **avad-review: Design Review Lite (Step 5.5)** — 20-item design checklist activated when frontend files change. Catches AI slop patterns, typography issues, accessibility gaps.
+- **avad-review: design-checklist.md** — 132-line checklist with AI slop detection, typography, spacing, interaction states, and DESIGN.md violation checks.
+
+### Changed
+- **avad-qa: WebSearch in allowed-tools** — enables test framework research.
+- **avad-qa: Rule 13 updated** — allows creating new test files for regression tests (previously blocked all test modifications).
+- **avad-review: Fix-First Heuristic (Step 6)** — reworked from passive listing to active fixing. Findings classified as AUTO-FIX (mechanical) or ASK (judgment). Auto-fixes applied directly, ASK items batched.
+
 ## [2.1.0] - 2026-03-19
 
 ### Fixed

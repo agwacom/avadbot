@@ -47,6 +47,46 @@ If `docs/GIT_WORKFLOW.md` does not exist, ask the user for the target branch onc
 
 ---
 
+## Step 2.5: Scope Drift Detection
+
+Before reviewing code quality, check: **did they build what was requested — nothing more, nothing less?**
+
+### Local mode:
+1. Read `TODOS.md` (if it exists). Read commit messages (`git log origin/<target>..HEAD --oneline`).
+   **If no PR exists:** rely on commit messages and TODOS.md for stated intent — this is the common case since /review runs before /avad-ship creates the PR.
+2. Identify the **stated intent** — what was this branch supposed to accomplish?
+3. Run `git diff origin/<target>...HEAD --stat` and compare the files changed against the stated intent.
+
+### PR mode:
+1. Read `TODOS.md` (if it exists). Read PR description (`gh pr view <number> --json body --jq .body`).
+   Read PR commit messages (`gh pr view <number> --json commits --jq '.commits[].messageHeadline'`).
+2. Identify the **stated intent** — what was this PR supposed to accomplish?
+3. Run `gh pr diff <number> --stat` and compare the files changed against the stated intent.
+4. Evaluate with skepticism:
+
+   **SCOPE CREEP detection:**
+   - Files changed that are unrelated to the stated intent
+   - New features or refactors not mentioned in the plan
+   - "While I was in there..." changes that expand blast radius
+
+   **MISSING REQUIREMENTS detection:**
+   - Requirements from TODOS.md/PR description not addressed in the diff
+   - Test coverage gaps for stated requirements
+   - Partial implementations (started but not finished)
+
+5. Output (before the main review begins):
+   ```
+   Scope Check: [CLEAN / DRIFT DETECTED / REQUIREMENTS MISSING]
+   Intent: <1-line summary of what was requested>
+   Delivered: <1-line summary of what the diff actually does>
+   [If drift: list each out-of-scope change]
+   [If missing: list each unaddressed requirement]
+   ```
+
+6. This is **INFORMATIONAL** — does not block the review. Proceed to Step 3.
+
+---
+
 ## Step 3: Get the Diff
 
 ### Local mode:
@@ -232,33 +272,109 @@ This step enriches the review with project context but does not block it.
 
 Apply the checklist against the diff:
 
-1. **Pass 1 (CRITICAL):** blocking categories
+1. **Pass 1 (CRITICAL):** blocking categories + Enum & Value Completeness
 2. **Pass 2 (INFORMATIONAL):** non-blocking categories
+
+**Enum & Value Completeness requires reading code OUTSIDE the diff.** When the diff introduces a new enum value, status, tier, or type constant, use Grep to find all files that reference sibling values, then Read those files to check if the new value is handled in switches, allowlists, and filters. This is the one category where within-diff review is insufficient.
 
 Respect the suppressions — do NOT flag items in the suppressions section.
 Read the FULL diff before commenting — do not flag issues already addressed in the diff.
 
 ---
 
-## Step 6: Output Findings
+## Step 5.5: Design Review (conditional)
+
+Check if the diff touches frontend files (use the same diff source as the main review):
 
 ### Local mode:
-
-- **CRITICAL issues:** For each, use a separate AskUserQuestion:
-  - The problem (`file:line` + description)
-  - Recommended fix
-  - Options: A) Fix now, B) Acknowledge, C) False positive — skip
-  - If user chose A: apply the fix.
-- **INFORMATIONAL:** Output them. No action needed.
-- **No issues:** `Pre-Landing Review: No issues found.`
+```bash
+git diff origin/<target>...HEAD --stat | grep -qE '\.(css|scss|less|jsx|tsx|vue|svelte|html)' && SCOPE_FRONTEND=true || SCOPE_FRONTEND=false
+```
 
 ### PR mode:
+```bash
+gh pr diff <number> --stat | grep -qE '\.(css|scss|less|jsx|tsx|vue|svelte|html)' && SCOPE_FRONTEND=true || SCOPE_FRONTEND=false
+```
+
+**If `SCOPE_FRONTEND=false`:** Skip design review silently. No output.
+
+**If `SCOPE_FRONTEND=true`:**
+
+1. **Check for DESIGN.md.** If `DESIGN.md` or `design-system.md` exists in the repo root, read it. All design findings are calibrated against it — patterns blessed in DESIGN.md are not flagged. If not found, use universal design principles.
+
+2. **Read `design-checklist.md`** in this skill directory. If the file cannot be read, skip design review with a note: "Design checklist not found — skipping design review."
+
+3. **Read each changed frontend file** (full file, not just diff hunks). Frontend files are identified by the patterns listed in the checklist.
+
+4. **Apply the design checklist** against the changed files. For each item:
+   - **[HIGH] mechanical CSS fix** (`outline: none`, `!important`, `font-size < 16px`): classify as AUTO-FIX
+   - **[HIGH/MEDIUM] design judgment needed**: classify as ASK
+   - **[LOW] intent-based detection**: present as "Possible — verify visually or run /design-review"
+
+5. **Include findings** in the review output under a "Design Review" header. Design findings merge with code review findings into the same Fix-First flow (Step 6).
+
+---
+
+## Step 6: Fix-First Output
+
+**Every finding gets action — not just critical ones.**
+
+Output a summary header: `Pre-Landing Review: N issues (X critical, Y informational)`
+
+### Step 6a: Classify each finding
+
+For each finding, classify as AUTO-FIX or ASK:
+
+- **AUTO-FIX** (mechanical, no judgment needed): dead code removal, stale comments, missing imports, N+1 query fixes, obvious typos, mechanical CSS fixes
+- **ASK** (requires judgment): security changes, race condition fixes, design decisions, architecture changes, anything where reasonable people could disagree
+
+Critical findings lean toward ASK; informational findings lean toward AUTO-FIX.
+
+### Step 6b: Auto-fix all AUTO-FIX items
+
+**Local mode only.** Apply each fix directly. For each one, output a one-line summary:
+`[AUTO-FIXED] [file:line] Problem → what you did`
+
+**PR mode:** Do NOT apply fixes (you don't have the PR branch checked out). Instead, list what would be auto-fixed:
+`[AUTO-FIXABLE] [file:line] Problem → suggested fix`
+
+### Step 6c: Handle ASK items
+
+#### Local mode:
+
+If there are ASK items, present them in ONE AskUserQuestion:
+
+- List each item with a number, the severity label, the problem, and a recommended fix
+- For each item: A) Fix as recommended, B) Skip
+- Include an overall RECOMMENDATION
+
+Example:
+```
+I auto-fixed 5 issues. 2 need your input:
+
+1. [CRITICAL] app/models/post.rb:42 — Race condition in status transition
+   Fix: Add `WHERE status = 'draft'` to the UPDATE
+   → A) Fix  B) Skip
+
+2. [INFORMATIONAL] app/services/generator.rb:88 — LLM output not type-checked
+   Fix: Add JSON schema validation
+   → A) Fix  B) Skip
+
+RECOMMENDATION: Fix both — #1 is a real race condition, #2 prevents silent data corruption.
+```
+
+If 3 or fewer ASK items, you may use individual AskUserQuestion calls instead of batching.
+
+#### PR mode:
 
 Post findings as a PR review using `gh pr review`:
 
 ```bash
 gh pr review <number> --comment --body "$(cat <<'EOF'
 ## Pre-Landing Review: N issues (X critical, Y informational)
+
+**AUTO-FIXED:**
+- [file:line] Problem → fix applied
 
 **CRITICAL:**
 - [file:line] Problem description
@@ -276,6 +392,11 @@ EOF
 
 If CRITICAL issues found, use `--request-changes` instead of `--comment`.
 If no issues found, use `--approve` with body `Pre-Landing Review: No issues found.`
+
+### Step 6d: Apply user-approved fixes
+
+Apply fixes for items where the user chose "Fix." Output what was fixed.
+If no ASK items exist (everything was AUTO-FIX), skip the question entirely.
 
 ### Bot comment resolution (if Step 4.5 found any):
 
@@ -325,7 +446,6 @@ summary, not once per comment.
 ## Important Rules
 
 - **Read the FULL diff before commenting.** Do not flag issues already addressed in the diff.
-- **Read-only by default (local mode).** Only modify files if the user explicitly chooses "Fix now".
-- **Never commit, push, or create PRs.** This is a review skill, not a shipping skill.
+- **Fix-first, not read-only.** AUTO-FIX items are applied directly. ASK items are only applied after user approval. Never commit, push, or create PRs — that's /avad-ship's job.
 - **Be terse.** One line problem, one line fix. No preamble.
 - **Only flag real problems.** Skip anything that's fine.
