@@ -15,6 +15,8 @@ Works with any project, any language, any framework.
 | `/avad-qa` | QA testing. Diff-aware, full, quick, or regression mode. |
 | `/avad-qa --report-only` | Same QA testing, but report-only — never fixes. |
 | `/avad-retro` | Weekly retro. Commits, patterns, team breakdown, trends. |
+| `/avad-debug` | Systematic debugger. Root cause investigation, pattern analysis, hypothesis testing. |
+| `/avad-document-release` | Post-ship docs. Cross-references the diff, updates all project documentation. |
 | `/browse` | Headless browser. Navigate, click, screenshot, assert — ~100ms per command. |
 
 ## How it works
@@ -121,6 +123,27 @@ Weekly engineering retrospective:
 - Shipping streaks, hotspot files, peak hours
 - Persistent history for trend tracking
 
+### `/avad-debug`
+
+Systematic debugging with root cause investigation. Four phases:
+
+1. **Investigate** — collect symptoms, read the code, check recent changes, reproduce
+2. **Analyze** — match against known bug patterns (race conditions, nil propagation, stale cache, config drift)
+3. **Hypothesize** — test one hypothesis at a time, 3-strike escalation if none match
+4. **Implement** — fix root cause with minimal diff, write regression test, verify
+
+Iron Law: no fixes without root cause investigation first.
+
+### `/avad-document-release`
+
+Post-ship documentation updater. Run after shipping code to ensure all docs match what was delivered:
+
+- Cross-references the diff against every `.md` file in the project
+- Auto-updates factual changes (paths, counts, tables), asks about narrative changes
+- Polishes CHANGELOG voice without clobbering entries
+- Checks cross-doc consistency and discoverability
+- Cleans up TODOS.md and optionally bumps VERSION
+
 ### `/browse`
 
 Headless Chromium browser, ~100ms per command. Auto-starts on first use, persists between calls.
@@ -180,7 +203,7 @@ Add to your `~/.claude/CLAUDE.md`:
 ```markdown
 ## avadbot
 
-Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /browse
+Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /browse
 ```
 
 ### Migrating from legacy install
@@ -194,6 +217,8 @@ rm -rf ~/.claude/skills/avad-review
 rm -rf ~/.claude/skills/avad-ship
 rm -rf ~/.claude/skills/avad-qa
 rm -rf ~/.claude/skills/avad-retro
+rm -rf ~/.claude/skills/avad-debug
+rm -rf ~/.claude/skills/avad-document-release
 rm -rf ~/.claude/skills/browse
 ```
 

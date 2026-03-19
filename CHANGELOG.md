@@ -2,6 +2,12 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.5.0] - 2026-03-19
+
+### Added
+- **avad-debug** — new skill: systematic root-cause debugger with Iron Law, 4-phase workflow (investigate → analyze → hypothesize → implement), pattern analysis, 3-strike escalation
+- **avad-document-release** — new skill: post-ship doc updater with inline base branch detection, CHANGELOG voice polish, cross-doc consistency, VERSION bump questions
+
 ## [2.4.0] - 2026-03-19
 
 ### Added
