@@ -2,6 +2,21 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.4.0] - 2026-03-19
+
+### Added
+- **avad-plan-eng-review: Cognitive Patterns** — 15 engineering leadership instincts (Larson, McKinley, Brooks, Beck, Majors, Google SRE) internalized as review perspective
+- **avad-plan-eng-review: Design Doc Check** — checks `~/.avadbot/projects/` for design docs before review, uses as source of truth
+- **avad-plan-eng-review: Review Log** — appends structured JSON to `$BRANCH-reviews.jsonl` for ship gate integration
+- **avad-retro: Test Health Tracking** — 3 new data gathering commands (test file count, regression test commits, test files changed), Test Health metric row, test_health JSON snapshot field, narrative section with trend delta
+
+### Changed
+- **avad-plan-eng-review: Always full review** — removed SMALL_CHANGE/BIG_CHANGE/SCOPE_REDUCTION menu; every plan gets full interactive walkthrough
+- **avad-plan-eng-review: Completeness check** — new Step 0 item: recommend complete version over shortcuts when AI-assisted coding compresses implementation time
+
+### Fixed
+- **avad-plan-ceo-review, avad-plan-eng-review, avad-ship:** sanitize branch names with slashes (`tr '/' '-'`) in JSONL review persistence paths
+
 ## [2.3.0] - 2026-03-19
 
 ### Added

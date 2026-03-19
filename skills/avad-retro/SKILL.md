@@ -1,6 +1,6 @@
 ---
 name: avad-retro
-version: 2.3.0
+version: 2.4.0
 description: |
   Weekly engineering retrospective. Analyzes commit history, work patterns,
   and code quality metrics with persistent history and trend tracking.
@@ -90,6 +90,15 @@ cat ~/.avadbot/projects/$REMOTE_SLUG/bot-review-history.md 2>/dev/null || true
 
 # 9. TODOS.md backlog snapshot (if available)
 cat TODOS.md 2>/dev/null || true
+
+# 10. Test file count
+find . -name '*.test.*' -o -name '*.spec.*' -o -name '*_test.*' -o -name '*_spec.*' 2>/dev/null | grep -v node_modules | wc -l
+
+# 11. Regression test commits in window
+git log origin/main --since="<window>" --oneline --grep="test(qa):" --grep="test(design):" --grep="test: coverage"
+
+# 12. Test files changed in window
+git log origin/main --since="<window>" --format="" --name-only | grep -E '\.(test|spec)\.' | sort -u | wc -l
 ```
 
 ### Step 2: Compute Metrics
@@ -112,6 +121,7 @@ Calculate and present these metrics in a summary table:
 | Avg LOC/session-hour | N |
 | Backlog Health | N open (X P0/P1, Y P2) · Z completed this period |
 | Bot review signal | N% (Y catches, Z FPs) |
+| Test Health | N total tests · M added this period · K regression tests |
 
 **Backlog Health (if TODOS.md exists):** Read `TODOS.md` (fetched in Step 1, command 9). Count total open items, P0/P1 items, P2 items. Use `git log` to detect items moved to `## Completed` within the time window (completed this period) and new items added (added this period). If `TODOS.md` doesn't exist, skip the Backlog Health metric row. Save to the JSON snapshot as the `backlog` field.
 
@@ -330,7 +340,17 @@ Use the Write tool to save the JSON file with this schema:
 }
 ```
 
-**Note:** Only include the `bot_review` field if `~/.avadbot/projects/<repo>/bot-review-history.md` exists and has entries within the time window. If no history data is available, omit the field entirely.
+**Note:** Only include the `bot_review` field if `~/.avadbot/projects/<repo>/bot-review-history.md` exists and has entries within the time window. Only include the `test_health` field if test files were found (command 10 returns > 0). If any has no data, omit the field entirely.
+
+Include test health data in the JSON when test files exist:
+```json
+  "test_health": {
+    "total_test_files": 47,
+    "tests_added_this_period": 5,
+    "regression_test_commits": 3,
+    "test_files_changed": 8
+  }
+```
 
 ### Step 14: Write the Narrative
 
@@ -373,6 +393,13 @@ Narrative covering:
 - Test LOC ratio trend
 - Hotspot analysis (are the same files churning?)
 - Any XL PRs that should have been split
+
+### Test Health
+- Total test files: N (from command 10)
+- Tests added this period: M (from command 12 — test files changed)
+- Regression test commits: list `test(qa):` and `test(design):` and `test: coverage` commits from command 11
+- If prior retro exists and has `test_health`: show delta "Test count: {last} → {now} (+{delta})"
+- If test ratio < 20%: flag as growth area — "100% test coverage is the goal. Tests make vibe coding safe."
 
 ### Focus & Highlights
 (from Step 8)

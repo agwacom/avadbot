@@ -1,6 +1,6 @@
 ---
 name: avad-plan-ceo-review
-version: 2.3.0
+version: 2.4.0
 description: |
   CEO/founder-mode plan review. Rethink the problem, find the 10-star product,
   challenge premises, expand scope when it creates a better product. Four modes:
@@ -618,7 +618,7 @@ After producing the Completion Summary above, persist the review result:
 
 ```bash
 SLUG=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null || echo "unknown")
-BRANCH=$(git branch --show-current)
+BRANCH=$(git branch --show-current | tr '/' '-')
 mkdir -p ~/.avadbot/projects/$SLUG
 echo '{"skill":"plan-ceo-review","timestamp":"TIMESTAMP","status":"STATUS","unresolved":N,"critical_gaps":N,"mode":"MODE"}' >> ~/.avadbot/projects/$SLUG/$BRANCH-reviews.jsonl
 ```

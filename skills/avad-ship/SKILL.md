@@ -1,6 +1,6 @@
 ---
 name: avad-ship
-version: 2.3.0
+version: 2.4.0
 description: |
   Ship workflow: validate branch state, sync with target branch, run tests,
   pre-landing review, push, and create PR. Project-aware — reads target branch,
@@ -174,7 +174,7 @@ Generate it. Read the project's available context to infer the workflow:
 
    ```bash
    SLUG=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null || echo "unknown")
-   BRANCH=$(git branch --show-current)
+   BRANCH=$(git branch --show-current | tr '/' '-')
    cat ~/.avadbot/projects/$SLUG/$BRANCH-reviews.jsonl 2>/dev/null || echo "NO_REVIEWS"
    ```
 
