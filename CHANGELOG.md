@@ -2,6 +2,19 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.1.0] - 2026-03-19
+
+### Fixed
+- **browse: async wrapping in js/eval** — `$B js "await fetch(...)"` no longer throws SyntaxError. Three new helpers (`hasAwait`, `needsBlockWrapper`, `wrapForEvaluate`) auto-wrap `await` expressions in async IIFEs.
+- **browse: option auto-routing in click** — clicking `<option>` elements now auto-routes to `selectOption()` instead of timing out for 30 seconds. Enhanced error message guides users to use `select` command when auto-routing can't apply.
+
+### Changed
+- **browse: chain command DRY** — `meta-commands.ts` now imports `READ_COMMANDS`, `WRITE_COMMANDS`, `META_COMMANDS` from `commands.ts` instead of maintaining duplicate local sets.
+
+### Added
+- **browse: `getRefRole()` on BrowserManager** — exposes ARIA role for ref selectors, used by option auto-routing.
+- **Upgrade tracking** — `backup/old-2026-03-19-0505/` (pre-upgrade file copies) and `upgrade/upgrade-checklist-2026-03-19.md` for session continuity.
+
 ## [2.0.2] - 2026-03-19
 
 ### Changed

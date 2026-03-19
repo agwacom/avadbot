@@ -1,6 +1,6 @@
 ---
 name: browse
-version: 2.0.2
+version: 2.1.0
 description: |
   Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with
   elements, verify page state, diff before/after actions, take annotated screenshots, check
