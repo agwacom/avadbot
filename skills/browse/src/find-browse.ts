@@ -28,15 +28,33 @@ export function locateBinary(): string | null {
   const root = getGitRoot();
   const home = homedir();
 
-  // Workspace-local takes priority (for development)
+  // 1. Project-local plugin structure (avadbot IS the project root)
   if (root) {
-    const local = join(root, '.claude', 'skills', 'avadbot', 'browse', 'dist', 'browse');
-    if (existsSync(local)) return local;
+    const pluginLocal = join(root, 'skills', 'browse', 'dist', 'browse');
+    if (existsSync(pluginLocal)) return pluginLocal;
   }
 
-  // Global fallback
-  const global = join(home, '.claude', 'skills', 'avadbot', 'browse', 'dist', 'browse');
+  // 2. Dev mode symlink (.claude/skills/browse/)
+  if (root) {
+    const devMode = join(root, '.claude', 'skills', 'browse', 'dist', 'browse');
+    if (existsSync(devMode)) return devMode;
+  }
+
+  // 3. Global install (setup script)
+  const global = join(home, '.claude', 'skills', 'browse', 'dist', 'browse');
   if (existsSync(global)) return global;
+
+  // 4. Marketplace plugin install
+  const pluginsDir = join(home, '.claude', 'plugins');
+  if (existsSync(pluginsDir)) {
+    try {
+      const entries = require('fs').readdirSync(pluginsDir);
+      for (const entry of entries) {
+        const candidate = join(pluginsDir, entry, 'skills', 'browse', 'dist', 'browse');
+        if (existsSync(candidate)) return candidate;
+      }
+    } catch {}
+  }
 
   return null;
 }
