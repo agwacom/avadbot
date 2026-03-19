@@ -1,6 +1,6 @@
 {
   "name": "avadbot",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, browser automation, and engineering retrospectives. Works with any project, any language, any framework. Use for /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /browse, or any workflow requiring structured plan review, pre-landing code review, one-command shipping, browser-based QA, or engineering retrospectives.",
   "author": {
     "name": "Naif",

@@ -2,6 +2,26 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.3.0] - 2026-03-19
+
+### Added
+- **avad-plan-ceo-review: SELECTIVE EXPANSION mode** — fourth review mode: hold scope as baseline, cherry-pick individual expansions via AskUserQuestion with neutral recommendations
+- **avad-plan-ceo-review: Cognitive Patterns** — 18 CEO thinking instincts (Bezos, Grove, Munger, Jobs, etc.) internalized as review perspective
+- **avad-plan-ceo-review: Implementation Alternatives (0C-bis)** — mandatory 2-3 approach comparison before mode selection
+- **avad-plan-ceo-review: CEO Plan Persistence (0D-POST)** — writes vision + scope decisions to `~/.avadbot/projects/<repo>/ceo-plans/` with archival for stale plans
+- **avad-plan-ceo-review: Design & UX Review (Section 11)** — interaction state coverage map, AI slop risk, accessibility basics for plans with UI scope
+- **avad-plan-ceo-review: Review Log** — appends structured JSON to `$BRANCH-reviews.jsonl` for ship gate integration
+- **avad-plan-ceo-review: Design Doc Promotion** — option to promote CEO plan to `docs/designs/` in the repo
+- **avad-ship: Review Readiness Dashboard** — reads `$BRANCH-reviews.jsonl` at pre-flight, shows review status table, gates on eng review (CEO/design optional)
+- **avad-ship: Test Framework Bootstrap (Step 2.75)** — detects runtime + test framework, offers to bootstrap with best-practice setup including CI pipeline
+- **avad-ship: Test Coverage Audit (Step 3.5)** — traces every changed codepath, diagrams coverage, auto-generates tests for gaps
+
+### Changed
+- **avad-plan-ceo-review: Expansion opt-in ceremony** — all scope expansions are now individual AskUserQuestion decisions (no silent additions)
+- **avad-plan-ceo-review: "Completeness is cheap" principle** — always prefer full implementation over shortcuts when AI compresses implementation time
+- **avad-ship: Fix-First Heuristic in pre-landing review** — findings classified as AUTO-FIX or ASK, auto-fixes applied without stopping
+- **avad-ship: WebSearch added to allowed-tools** — enables test framework research in bootstrap step
+
 ## [2.2.0] - 2026-03-19
 
 ### Added

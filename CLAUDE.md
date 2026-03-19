@@ -183,10 +183,15 @@ All per-project runtime data lives under `~/.avadbot/`:
 ├── evals/                      # Eval run results
 ├── e2e-live.json               # E2E heartbeat
 ├── e2e-runs/                   # E2E run artifacts
+├── no-test-bootstrap           # Opt-out marker for test framework bootstrap
 └── projects/
     └── <repo>/
         ├── bot-review-history.md   # Per-project bot triage history
-        └── review-checklist.md     # Auto-generated review checklist
+        ├── review-checklist.md     # Auto-generated review checklist
+        ├── <branch>-reviews.jsonl  # Review readiness log (ship gate overrides)
+        └── ceo-plans/              # Persisted CEO review plans
+            ├── <date>-<feature>.md # Active plan documents
+            └── archive/            # Stale/merged plans
 ```
 
 ## Reference
