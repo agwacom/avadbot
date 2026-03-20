@@ -2,6 +2,13 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.6.0] - 2026-03-20
+
+### Added
+- **avad-browse:** `url-validation.ts` — blocks SSRF via cloud metadata endpoints (169.254.169.254, metadata.google.internal, fd00::). Catches bypass variants: hex, decimal, octal, IPv6. 16 new tests. (ported from gstack v0.9.1.0)
+- **avad-review:** Step 5.6 — Documentation staleness check. Flags INFORMATIONAL when .md docs describe code changed in the diff but were not updated in the same branch. Fix action: `/avadbot:avad-document-release`. (ported from gstack v0.9.x)
+- **avad-plan-eng-review:** Lake Score metric in Completion Summary — tracks X/Y ratio of recommendations that chose the complete option over shortcuts. (ported from gstack v0.9.x)
+
 ## [2.5.1] - 2026-03-20
 
 ### Changed

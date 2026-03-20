@@ -1,6 +1,6 @@
 ---
 name: avad-plan-eng-review
-version: 2.5.1
+version: 2.6.0
 description: |
   Eng manager-mode plan review. Lock in the execution plan — architecture,
   data flow, diagrams, edge cases, test coverage, performance. Walks through
@@ -224,6 +224,7 @@ At the end of the review, fill in and display this summary so the user can see a
 - Unresolved decisions: ___ (listed below)
 - TODOS.md updates: ___ items proposed to user
 - Failure modes: ___ critical gaps flagged
+- Lake Score: ___/___ recommendations chose complete option
 
 ## Review Log
 

@@ -1,6 +1,6 @@
 ---
 name: avad-browse
-version: 2.5.1
+version: 2.6.0
 description: |
   Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with
   elements, verify page state, diff before/after actions, take annotated screenshots, check

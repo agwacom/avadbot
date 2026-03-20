@@ -1,6 +1,6 @@
 ---
 name: avad-review
-version: 2.5.1
+version: 2.6.0
 description: |
   Pre-landing code review. Analyzes diff for structural issues using a project-specific
   checklist. Two modes: local (review current branch) or PR (review and comment on a
@@ -314,6 +314,20 @@ gh pr diff <number> --stat | grep -qE '\.(css|scss|less|jsx|tsx|vue|svelte|html)
    - **[LOW] intent-based detection**: present as "Possible — verify visually or run /design-review"
 
 5. **Include findings** in the review output under a "Design Review" header. Design findings merge with code review findings into the same Fix-First flow (Step 6).
+
+---
+
+## Step 5.6: Documentation staleness check
+
+Cross-reference the diff against documentation files. For each `.md` file in the repo root (README.md, ARCHITECTURE.md, CONTRIBUTING.md, CLAUDE.md, etc.):
+
+1. Check if code changes in the diff affect features, components, or workflows described in that doc file.
+2. If the doc file was NOT updated in this branch but the code it describes WAS changed, flag it as an INFORMATIONAL finding:
+   "Documentation may be stale: [file] describes [feature/component] but code changed in this branch. Consider running `/avadbot:avad-document-release`."
+
+This is informational only — never critical. The fix action is `/avadbot:avad-document-release`.
+
+If no documentation files exist, skip this step silently.
 
 ---
 

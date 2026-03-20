@@ -1,6 +1,6 @@
 ---
 name: avad-ship
-version: 2.5.1
+version: 2.6.0
 description: |
   Ship workflow: validate branch state, sync with target branch, run tests,
   pre-landing review, push, and create PR. Project-aware — reads target branch,
