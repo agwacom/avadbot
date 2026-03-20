@@ -88,8 +88,9 @@ fi
 
 If `NEEDS_SETUP`:
 1. Tell the user: "avadbot browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait.
-2. Run: `cd <SKILL_DIR> && ./setup`
-3. If `bun` is not installed: `curl -fsSL https://bun.sh/install | bash`
+2. Find the avadbot root (contains `package.json` with `"name": "avadbot"`): `AVADBOT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)/avadbot; [ -f "$AVADBOT_ROOT/package.json" ] || AVADBOT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null); [ -f "$AVADBOT_ROOT/package.json" ] || echo "Cannot find avadbot root"`
+3. Build: `cd "$AVADBOT_ROOT" && bun install && bun run build`
+4. If `bun` is not installed: `curl -fsSL https://bun.sh/install | bash`
 
 **Create output directories:**
 
