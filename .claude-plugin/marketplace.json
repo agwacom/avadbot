@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "avadbot",
-      "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, browser automation, and engineering retrospectives. Works with any project, any language, any framework.",
-      "version": "2.0.2",
+      "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, debugging, documentation, browser automation, and engineering retrospectives. Works with any project, any language, any framework.",
+      "version": "2.5.0",
       "author": {
         "name": "Naif",
         "email": "naif@agwa.com"

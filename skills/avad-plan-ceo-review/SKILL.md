@@ -1,6 +1,6 @@
 ---
 name: avad-plan-ceo-review
-version: 2.4.0
+version: 2.5.0
 description: |
   CEO/founder-mode plan review. Rethink the problem, find the 10-star product,
   challenge premises, expand scope when it creates a better product. Four modes:

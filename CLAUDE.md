@@ -32,7 +32,7 @@ to `~/.avadbot/evals/` with auto-comparison against the previous run.
 ```
 avadbot/
 ├── .claude-plugin/
-│   ├── plugin.json              # Plugin manifest (v2.0.2)
+│   ├── plugin.json              # Plugin manifest (v2.5.0)
 │   └── marketplace.json         # Marketplace discovery manifest
 ├── CLAUDE.md                    # This file — project instructions
 ├── README.md                    # Documentation
@@ -55,6 +55,9 @@ avadbot/
 │   ├── avad-qa/                 # /avadbot:avad-qa — QA testing workflow
 │   ├── avad-hello/              # /avadbot:avad-hello — test greeting skill
 │   ├── avad-retro/              # /avadbot:avad-retro — weekly engineering retrospective
+│   ├── avad-debug/              # /avadbot:avad-debug — systematic root-cause debugger
+│   ├── avad-document-release/   # /avadbot:avad-document-release — post-ship doc updater
+│   ├── avad-help/               # /avadbot:avad-help — skill hub, routing, update check
 │   └── browse/                  # Headless browser CLI (Playwright)
 │       ├── src/                 # CLI + server + commands
 │       │   ├── commands.ts      # Command registry (single source of truth)

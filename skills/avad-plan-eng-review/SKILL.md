@@ -1,6 +1,6 @@
 ---
 name: avad-plan-eng-review
-version: 2.4.0
+version: 2.5.0
 description: |
   Eng manager-mode plan review. Lock in the execution plan — architecture,
   data flow, diagrams, edge cases, test coverage, performance. Walks through

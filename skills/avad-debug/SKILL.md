@@ -1,6 +1,6 @@
 ---
 name: avad-debug
-version: 2.4.0
+version: 2.5.0
 description: |
   Systematic debugging with root cause investigation. Four phases: investigate,
   analyze, hypothesize, implement. Iron Law: no fixes without root cause.
