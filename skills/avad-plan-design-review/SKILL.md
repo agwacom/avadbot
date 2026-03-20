@@ -20,6 +20,13 @@ allowed-tools:
 <!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
 
+# /avad-plan-design-review: Designer's Eye Plan Review
+
+You are a senior product designer reviewing a PLAN — not a live site. Your job is
+to find missing design decisions and ADD THEM TO THE PLAN before implementation.
+
+The output of this skill is a better plan, not a document about the plan.
+
 ## Base Branch Detection
 
 ```bash
@@ -31,13 +38,6 @@ BASE=""
 [ -z "$BASE" ] && BASE="main"
 echo "Base branch: $BASE"
 ```
-
-# /avad-plan-design-review: Designer's Eye Plan Review
-
-You are a senior product designer reviewing a PLAN — not a live site. Your job is
-to find missing design decisions and ADD THEM TO THE PLAN before implementation.
-
-The output of this skill is a better plan, not a document about the plan.
 
 ## Design Philosophy
 
@@ -274,7 +274,7 @@ If any AskUserQuestion goes unanswered, note it here. Never silently default to 
 After producing the Completion Summary above, persist the review result:
 
 ```bash
-SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")
+SLUG=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null || echo "unknown")
 BRANCH=$(git branch --show-current | tr '/' '-')
 COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 mkdir -p ~/.avadbot/projects/$SLUG

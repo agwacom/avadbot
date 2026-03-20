@@ -122,6 +122,24 @@ mkdir -p "$REPORT_DIR/screenshots"
 
 ## Phases 1-6: Design Audit Baseline
 
+### Phase 1: First Impression (5 seconds)
+Navigate to the target URL. Take a screenshot immediately. Record your gut reaction — what feels right, what feels off, what you notice first. This is what users feel before they read anything.
+
+### Phase 2: Page-by-Page Crawl
+Visit each page in scope. For each page: screenshot, snapshot (DOM structure), note visual issues. Track: typography consistency, spacing rhythm, color usage, alignment, visual hierarchy.
+
+### Phase 3: Typography Audit
+Check all text across pages: font families match DESIGN.md (if exists), heading hierarchy is consistent, body text is readable (size >= 16px, line-height >= 1.5), no orphaned headings or widows.
+
+### Phase 4: Color & Contrast Audit
+Check all color usage: palette consistency with DESIGN.md, text contrast meets WCAG AA (4.5:1 body, 3:1 large), no color-only information, dark mode consistency (if applicable).
+
+### Phase 5: Spacing & Layout Audit
+Check spacing rhythm: consistent use of spacing scale, alignment to grid, no rogue margins/padding, responsive behavior at mobile/tablet/desktop breakpoints.
+
+### Phase 6: Interaction & AI Slop Audit
+Check interactions: hover states, focus indicators, loading states, error states, empty states. Flag AI slop patterns: purple gradients, generic 3-column grids, uniform bubbly border-radius, centered-everything layouts.
+
 ## Design Methodology
 
 Design review state is stored per-project under `~/.avadbot/projects/$SLUG/`.
@@ -270,7 +288,7 @@ Write the report to both local and project-scoped locations:
 
 **Project-scoped:**
 ```bash
-SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")
+SLUG=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null || echo "unknown")
 mkdir -p ~/.avadbot/projects/$SLUG
 ```
 Write to `~/.avadbot/projects/{slug}/{branch}-design-audit-{datetime}.md`

@@ -17,7 +17,7 @@ if [ ! -f "$FREEZE_FILE" ]; then
   exit 0
 fi
 
-FREEZE_DIR=$(tr -d '[:space:]' < "$FREEZE_FILE")
+FREEZE_DIR=$(tr -d '\n\r' < "$FREEZE_FILE")
 
 # If freeze dir is empty, allow
 if [ -z "$FREEZE_DIR" ]; then
