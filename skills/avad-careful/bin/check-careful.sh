@@ -28,7 +28,7 @@ CMD_LOWER=$(printf '%s' "$CMD" | tr '[:upper:]' '[:lower:]')
 # --- Check for safe exceptions (rm -rf of build artifacts) ---
 if printf '%s' "$CMD" | grep -qE 'rm\s+(-[a-zA-Z]*r[a-zA-Z]*\s+|--recursive\s+)' 2>/dev/null; then
   SAFE_ONLY=true
-  RM_ARGS=$(printf '%s' "$CMD" | sed -E 's/.*rm\s+(-[a-zA-Z]+\s+)*//;s/--recursive\s*//')
+  RM_ARGS=$(printf '%s' "$CMD" | sed -E 's/.*rm[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*//;s/--recursive[[:space:]]*//')
   for target in $RM_ARGS; do
     case "$target" in
       */node_modules|node_modules|*/\.next|\.next|*/dist|dist|*/__pycache__|__pycache__|*/\.cache|\.cache|*/build|build|*/\.turbo|\.turbo|*/coverage|coverage)
@@ -51,8 +51,9 @@ fi
 WARN=""
 PATTERN=""
 
-# rm -rf / rm -r / rm --recursive
-if printf '%s' "$CMD" | grep -qE 'rm\s+(-[a-zA-Z]*r|--recursive)' 2>/dev/null; then
+# rm -rf / rm -r / rm -f -r / rm --recursive (flags in any order)
+if printf '%s' "$CMD" | grep -qE 'rm\s+(-[a-zA-Z]*r[a-zA-Z]*\b|--recursive)(\s|$)' 2>/dev/null || \
+   printf '%s' "$CMD" | grep -qE 'rm\s+(-[a-zA-Z]+\s+)*-[a-zA-Z]*r[a-zA-Z]*\b' 2>/dev/null; then
   WARN="Destructive: recursive delete (rm -r). This permanently removes files."
   PATTERN="rm_recursive"
 fi
@@ -81,8 +82,8 @@ if [ -z "$WARN" ] && printf '%s' "$CMD" | grep -qE 'git\s+reset\s+--hard' 2>/dev
   PATTERN="git_reset_hard"
 fi
 
-# git checkout . / git restore .
-if [ -z "$WARN" ] && printf '%s' "$CMD" | grep -qE 'git\s+(checkout|restore)\s+\.' 2>/dev/null; then
+# git checkout . / git checkout -- . / git restore .
+if [ -z "$WARN" ] && printf '%s' "$CMD" | grep -qE 'git\s+(checkout|restore)\s+(--\s+)?\.' 2>/dev/null; then
   WARN="Destructive: discards all uncommitted changes in the working tree."
   PATTERN="git_discard"
 fi

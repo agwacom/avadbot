@@ -77,6 +77,25 @@ Skill                        What it does                              When to u
 /avadbot:avad-browse            Headless browser — navigate, click,      When you need to see a page:
                                screenshot, test forms, import cookies   QA, dogfooding, verification
 
+/avadbot:avad-plan-design-review Designer's eye plan review — rates 8     Before building UI: design
+                               design dimensions, produces fix plan     critique and score
+
+/avadbot:avad-design-consultation Design system creation — competitive   Starting a project: create
+                               research, DESIGN.md, color/font system   DESIGN.md with design system
+
+/avadbot:avad-design-review    Visual QA + fix loop — spacing, slop,   After building UI: find and
+                               interaction issues, risk calculator      fix visual issues
+
+/avadbot:avad-careful          Destructive command guardrails — warns   Safety: prevent accidental
+                               before rm -rf, DROP TABLE, force-push   destructive commands
+
+/avadbot:avad-freeze           Restrict edits to a directory — locks   Focus: prevent changes outside
+                               Edit/Write to a specific path           the directory you're working in
+
+/avadbot:avad-unfreeze         Clear freeze boundary                   After /avad-freeze: unlock edits
+
+/avadbot:avad-guard            Combined careful + freeze in one cmd    Safety + focus: both guardrails
+
 /avadbot:avad-help              Skill hub — shows all skills,            When unsure which skill to use:
                                context-aware routing, update check      see what's available
 
@@ -97,6 +116,13 @@ If the user described what they want to do (either in the invocation or as a fol
 - "docs", "documentation", "README", "changelog" → `/avadbot:avad-document-release`
 - "retro", "retrospective", "week", "metrics" → `/avadbot:avad-retro`
 - "browse", "browser", "screenshot", "page" → `/avadbot:avad-browse`
+- "design plan", "design critique", "design score" → `/avadbot:avad-plan-design-review`
+- "design system", "DESIGN.md", "colors", "typography" → `/avadbot:avad-design-consultation`
+- "visual QA", "design audit", "spacing", "AI slop" → `/avadbot:avad-design-review`
+- "careful", "safety", "prod mode", "guardrails" → `/avadbot:avad-careful`
+- "freeze", "restrict edits", "lock directory" → `/avadbot:avad-freeze`
+- "unfreeze", "unlock edits" → `/avadbot:avad-unfreeze`
+- "guard", "full safety" → `/avadbot:avad-guard`
 
 **If no context given:** Use AskUserQuestion:
 "What are you trying to do?" with options based on common workflows:
@@ -108,6 +134,8 @@ If the user described what they want to do (either in the invocation or as a fol
 - F) Update docs after shipping
 - G) Browse/screenshot a page
 - H) Run a weekly retro
+- I) Design system or design review
+- J) Enable safety guardrails (careful/freeze/guard)
 
 Then recommend the specific skill with the exact command to run.
 

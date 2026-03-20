@@ -90,7 +90,7 @@ Before reviewing the plan, gather context:
 
 ```bash
 git log --oneline -15
-git diff <base> --stat
+git diff $BASE --stat
 ```
 
 Then read:
