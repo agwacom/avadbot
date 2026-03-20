@@ -1,6 +1,6 @@
 ---
 name: avad-debug
-version: 2.6.0
+version: 2.7.0
 description: |
   Systematic debugging with root cause investigation. Four phases: investigate,
   analyze, hypothesize, implement. Iron Law: no fixes without root cause.
@@ -16,6 +16,18 @@ allowed-tools:
   - Grep
   - Glob
   - AskUserQuestion
+hooks:
+  PreToolUse:
+    - matcher: "Edit"
+      hooks:
+        - type: command
+          command: "bash ${CLAUDE_SKILL_DIR}/../avad-freeze/bin/check-freeze.sh"
+          statusMessage: "Checking debug scope boundary..."
+    - matcher: "Write"
+      hooks:
+        - type: command
+          command: "bash ${CLAUDE_SKILL_DIR}/../avad-freeze/bin/check-freeze.sh"
+          statusMessage: "Checking debug scope boundary..."
 ---
 <!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
@@ -47,6 +59,25 @@ Gather context before forming any hypothesis.
 4. **Reproduce:** Can you trigger the bug deterministically? If not, gather more evidence before proceeding.
 
 Output: **"Root cause hypothesis: ..."** — a specific, testable claim about what is wrong and why.
+
+---
+
+## Scope Lock (optional — activate with /avad-freeze)
+
+Before making any fixes, you can lock the debug session to a specific directory so accidental writes outside the bug's scope are blocked.
+
+**Activate scope lock:**
+```bash
+# Check if avad-freeze is available
+if [ -x "${CLAUDE_SKILL_DIR}/../avad-freeze/bin/check-freeze.sh" ]; then
+  STATE_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.avadbot}"
+  echo "Scope lock available. Run /avad-freeze to restrict edits to a directory."
+fi
+```
+
+**How it works:** When `/avad-freeze` is active, any Edit or Write outside the locked directory is blocked by the PreToolUse hook. This prevents accidental collateral changes during debugging.
+
+**Remove scope lock:** Run `/avad-unfreeze` to clear the boundary.
 
 ---
 

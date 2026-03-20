@@ -13,6 +13,11 @@ When generating `~/.avadbot/projects/<repo>/review-checklist.md`:
 
 ## Pass 1 — Critical Seed Categories
 
+### Enum & Value Completeness
+- Switch/match statements or conditional chains that don't handle all enum variants or status values
+- New enum variants added without updating all switch statements or type guards that cover them
+- Hardcoded string/int comparisons against values that should be covered exhaustively
+
 ### SQL & Data Safety
 - String interpolation in SQL or ad-hoc query building that should use parameter binding or query builders
 - Read-modify-write patterns that should be atomic updates

@@ -161,6 +161,64 @@ function generateSkillList(): string {
   return lines.join('\n');
 }
 
+function generateTestBootstrap(): string {
+  return `## Test Framework Bootstrap
+
+Before running tests, check for the opt-out marker:
+
+\`\`\`bash
+[ -f .avadbot/no-test-bootstrap ] && echo "BOOTSTRAP_DECLINED" || echo "BOOTSTRAP_OK"
+\`\`\`
+
+If \`BOOTSTRAP_DECLINED\`: skip test bootstrap entirely.
+
+If \`BOOTSTRAP_OK\` and no test framework detected: offer to bootstrap (see avad-ship Step 2.75 for the full bootstrap procedure). If user declines, write \`.avadbot/no-test-bootstrap\` and continue.`;
+}
+
+function generateDesignMethodology(): string {
+  return `## Design Methodology
+
+Design review state is stored per-project under \`~/.avadbot/projects/$SLUG/\`.
+
+Design reports are stored under \`.avadbot/design-reports/\` in the project root.
+
+When running design review:
+1. Read \`DESIGN.md\` at the project root (if it exists) — this is the source of truth for the design system.
+2. Screenshots go to \`.avadbot/design-reports/<branch>-<timestamp>/\`.
+3. Compare screenshots against the DESIGN.md spec. Flag deviations, not preferences.
+4. Only flag issues you can see in the screenshot or verify in the diff. Never flag hypothetical issues.`;
+}
+
+function generateBaseBranchDetect(): string {
+  return `## Base Branch Detection
+
+\`\`\`bash
+# Detect base branch (prefer configured, fall back to common defaults)
+BASE=""
+[ -f docs/GIT_WORKFLOW.md ] && BASE=$(grep -m1 'target.*branch\\|integration.*branch\\|base.*branch' docs/GIT_WORKFLOW.md | grep -oE '(main|master|dev|develop|trunk)' | head -1)
+[ -z "$BASE" ] && BASE=$(git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}')
+[ -z "$BASE" ] && BASE=$(git branch -r | grep -E 'origin/(main|master|dev|develop|trunk)' | head -1 | sed 's|origin/||' | tr -d ' ')
+[ -z "$BASE" ] && BASE="main"
+echo "Base branch: $BASE"
+\`\`\``;
+}
+
+function generateReviewDashboard(): string {
+  return `## Review Readiness Dashboard
+
+\`\`\`bash
+SLUG=$(basename "$(git remote get-url origin 2>/dev/null)" .git 2>/dev/null || echo "unknown")
+BRANCH=$(git branch --show-current | tr '/' '-')
+cat ~/.avadbot/projects/$SLUG/$BRANCH-reviews.jsonl 2>/dev/null || echo "NO_REVIEWS"
+\`\`\`
+
+Parse the JSONL output. Find the most recent entry for each skill. Display the dashboard and log review runs to:
+
+\`\`\`bash
+~/.avadbot/projects/$SLUG/$BRANCH-reviews.jsonl
+\`\`\``;
+}
+
 const RESOLVERS: Record<string, () => string> = {
   COMMAND_REFERENCE: generateCommandReference,
   SNAPSHOT_FLAGS: generateSnapshotFlags,
@@ -168,6 +226,10 @@ const RESOLVERS: Record<string, () => string> = {
   QA_METHODOLOGY: generateQAMethodology,
   VERSION: generateVersion,
   SKILL_LIST: generateSkillList,
+  TEST_BOOTSTRAP: generateTestBootstrap,
+  DESIGN_METHODOLOGY: generateDesignMethodology,
+  BASE_BRANCH_DETECT: generateBaseBranchDetect,
+  REVIEW_DASHBOARD: generateReviewDashboard,
 };
 
 // ─── Template Discovery ─────────────────────────────────────

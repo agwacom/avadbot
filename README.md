@@ -10,6 +10,7 @@ Works with any project, any language, any framework.
 |-------|-------------|
 | `/avad-plan-ceo-review` | Product thinking. Challenges the premise, expands scope, finds the real product. |
 | `/avad-plan-eng-review` | Engineering plan. Architecture, data flow, edge cases, diagrams, test coverage. |
+| `/avad-plan-design-review` | Designer's eye plan review. Rates design dimensions 0-10, fixes the plan to get there. |
 | `/avad-review` | Pre-landing review. Structural bugs, race conditions, trust boundaries, missing tests. |
 | `/avad-ship` | Ship it. Sync, test, review, push, PR — one command. |
 | `/avad-qa` | QA testing. Diff-aware, full, quick, or regression mode. |
@@ -18,6 +19,12 @@ Works with any project, any language, any framework.
 | `/avad-debug` | Systematic debugger. Root cause investigation, pattern analysis, hypothesis testing. |
 | `/avad-document-release` | Post-ship docs. Cross-references the diff, updates all project documentation. |
 | `/avad-help` | Skill hub. Shows available skills, recommends the right one, checks for updates. |
+| `/avad-design-consultation` | Design system creation. Researches your space, proposes aesthetic/typography/color, generates preview, writes DESIGN.md. |
+| `/avad-design-review` | Visual QA + fix loop. Finds spacing issues, AI slop patterns, interaction problems — then fixes them with before/after screenshots. |
+| `/avad-careful` | Safety guardrails. Warns before rm -rf, DROP TABLE, force-push, and other destructive commands. |
+| `/avad-freeze` | Edit boundary. Restricts edits to a specific directory for the session. |
+| `/avad-unfreeze` | Clears the freeze boundary set by /avad-freeze. |
+| `/avad-guard` | Full safety mode. Combines /avad-careful + /avad-freeze in one command. |
 | `/avad-browse` | Headless browser. Navigate, click, screenshot, assert — ~100ms per command. |
 
 ## How it works

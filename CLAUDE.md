@@ -52,12 +52,19 @@ avadbot/
 │   ├── avad-review/             # /avadbot:avad-review — pre-landing code review
 │   ├── avad-plan-ceo-review/    # /avadbot:avad-plan-ceo-review — CEO plan review
 │   ├── avad-plan-eng-review/    # /avadbot:avad-plan-eng-review — eng manager plan review
+│   ├── avad-plan-design-review/ # /avadbot:avad-plan-design-review — designer's eye plan review
 │   ├── avad-qa/                 # /avadbot:avad-qa — QA testing workflow
 │   ├── avad-hello/              # /avadbot:avad-hello — test greeting skill
 │   ├── avad-retro/              # /avadbot:avad-retro — weekly engineering retrospective
-│   ├── avad-debug/              # /avadbot:avad-debug — systematic root-cause debugger
+│   ├── avad-debug/              # /avadbot:avad-debug — systematic root-cause debugger (+ Scope Lock)
 │   ├── avad-document-release/   # /avadbot:avad-document-release — post-ship doc updater
 │   ├── avad-help/               # /avadbot:avad-help — skill hub, routing, update check
+│   ├── avad-design-consultation/ # /avadbot:avad-design-consultation — design system creation
+│   ├── avad-design-review/      # /avadbot:avad-design-review — visual QA + fix loop
+│   ├── avad-careful/            # /avadbot:avad-careful — destructive command guardrails
+│   ├── avad-freeze/             # /avadbot:avad-freeze — restrict edits to a directory
+│   ├── avad-unfreeze/           # /avadbot:avad-unfreeze — clear freeze boundary
+│   ├── avad-guard/              # /avadbot:avad-guard — combined careful + freeze
 │   └── avad-browse/             # /avadbot:avad-browse — Headless browser CLI (Playwright)
 │       ├── src/                 # CLI + server + commands
 │       │   ├── commands.ts      # Command registry (single source of truth)

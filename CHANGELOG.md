@@ -2,6 +2,24 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.7.0] - 2026-03-20
+
+### Added
+- **avad-careful** — new skill: PreToolUse hook that intercepts destructive Bash commands (rm -rf, DROP TABLE, TRUNCATE, git push --force, git reset --hard, kubectl delete, docker rm -f) and asks before running. Safe exceptions for build artifacts (node_modules, dist, .next, etc.)
+- **avad-freeze** — new skill: directory-scoped edit restrictions. PreToolUse hooks on Edit and Write block changes outside the locked directory. State stored in `~/.avadbot/freeze-dir.txt`.
+- **avad-unfreeze** — new skill: clears the active freeze boundary set by /avad-freeze
+- **avad-guard** — new skill: combined careful + freeze in one command. PreToolUse hooks delegate to avad-careful (Bash) and avad-freeze (Edit/Write) bin scripts
+- **avad-design-consultation** — new skill: design system creation workflow. Researches the product space, proposes aesthetic/typography/color system, generates a font & color preview page, writes DESIGN.md. 6-phase workflow.
+- **avad-design-review** — new skill: visual QA + fix loop. Finds spacing issues, AI slop patterns, interaction problems. Fix loop with risk calculator. Produces before/after screenshots and TODOS.md updates.
+- **avad-plan-design-review** — new skill: designer's eye plan review. Rates 8 design dimensions 0-10, produces a fix plan, logs to review readiness dashboard.
+- **avad-debug:** Scope Lock section + PreToolUse hooks (Edit, Write → avad-freeze boundary check). Run /avad-freeze before debugging to restrict changes to the bug's directory.
+- **avad-review/checklist-seed.md:** Enum & Value Completeness category added to Pass 1 Critical seed categories
+- **avad-review/bot-triage-templates.md:** vendor-neutral bot reply templates (Greptile, CodeRabbit, SonarCloud). Covers escalation detection, Tier 1/2 reply templates, severity re-ranking.
+- **gen-skill-docs:** 4 new template placeholders — `{{TEST_BOOTSTRAP}}`, `{{DESIGN_METHODOLOGY}}`, `{{BASE_BRANCH_DETECT}}`, `{{REVIEW_DASHBOARD}}`. All use `~/.avadbot/` namespace (not `~/.gstack/`). REVIEW_DASHBOARD reads JSONL directly (no gstack-review-read binary).
+
+### Changed
+- **avad-debug:** added hooks frontmatter (PreToolUse Edit/Write → avad-freeze boundary check) and Scope Lock section between Phase 1 and Phase 2
+
 ## [2.6.0] - 2026-03-20
 
 ### Added
