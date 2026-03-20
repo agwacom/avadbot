@@ -1,6 +1,6 @@
 ---
 name: avad-help
-version: 2.5.0
+version: 2.5.1
 description: |
   Skill hub: shows all available avadbot skills, helps pick the right one,
   and checks for updates. Use when unsure which skill to run, or to see
@@ -76,7 +76,7 @@ Skill                        What it does                              When to u
 /avadbot:avad-retro            Weekly engineering retrospective —       End of week: commit analysis,
                                commit analysis, team breakdown          patterns, improvements
 
-/avadbot:browse                Headless browser — navigate, click,      When you need to see a page:
+/avadbot:avad-browse            Headless browser — navigate, click,      When you need to see a page:
                                screenshot, test forms, import cookies   QA, dogfooding, verification
 
 /avadbot:avad-help              Skill hub — shows all skills,            When unsure which skill to use:
@@ -98,7 +98,7 @@ If the user described what they want to do (either in the invocation or as a fol
 - "debug", "fix", "stuck", "error", "crash" → `/avadbot:avad-debug`
 - "docs", "documentation", "README", "changelog" → `/avadbot:avad-document-release`
 - "retro", "retrospective", "week", "metrics" → `/avadbot:avad-retro`
-- "browse", "browser", "screenshot", "page" → `/avadbot:browse`
+- "browse", "browser", "screenshot", "page" → `/avadbot:avad-browse`
 
 **If no context given:** Use AskUserQuestion:
 "What are you trying to do?" with options based on common workflows:

@@ -46,7 +46,7 @@ const skills = discoverSkills();
 
 if (skills.length === 0) {
   console.error(`ERROR: No skills found in ${SKILLS_SCAN_DIR}/*/SKILL.md`);
-  console.error('Expected: avad-ship, avad-review, avad-qa, browse, ...');
+  console.error('Expected: avad-ship, avad-review, avad-qa, avad-browse, ...');
   process.exit(1);
 }
 

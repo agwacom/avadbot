@@ -5,8 +5,8 @@
  * the command registry and snapshot flags.
  */
 
-import { ALL_COMMANDS } from '../../skills/browse/src/commands';
-import { parseSnapshotArgs } from '../../skills/browse/src/snapshot';
+import { ALL_COMMANDS } from '../../skills/avad-browse/src/commands';
+import { parseSnapshotArgs } from '../../skills/avad-browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 

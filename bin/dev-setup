@@ -51,10 +51,15 @@ for skill_dir in "$SKILLS_DIR"/*/; do
   linked+=("$skill_name")
 done
 
+# One-time migration: remove stale browse symlink (renamed to avad-browse 2.5.1)
+if [ -L "$REPO_ROOT/.claude/skills/browse" ]; then
+  rm "$REPO_ROOT/.claude/skills/browse"
+fi
+
 # Guard: ensure at least one skill was found
 if [ ${#linked[@]} -eq 0 ]; then
   echo "ERROR: No skills found in $SKILLS_DIR/*/SKILL.md" >&2
-  echo "Expected: avad-ship, avad-review, avad-qa, browse, ..." >&2
+  echo "Expected: avad-ship, avad-review, avad-qa, avad-browse, ..." >&2
   exit 1
 fi
 

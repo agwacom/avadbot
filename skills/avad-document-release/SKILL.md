@@ -1,6 +1,6 @@
 ---
 name: avad-document-release
-version: 2.5.0
+version: 2.5.1
 description: |
   Post-ship documentation update. Reads all project docs, cross-references the
   diff, updates README/ARCHITECTURE/CONTRIBUTING/CLAUDE.md to match what shipped,

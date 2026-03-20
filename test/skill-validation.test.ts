@@ -12,8 +12,8 @@
 
 import { describe, test, expect } from 'bun:test';
 import { validateSkill, extractWeightsFromTable } from './helpers/skill-parser';
-import { ALL_COMMANDS, COMMAND_DESCRIPTIONS, READ_COMMANDS, WRITE_COMMANDS, META_COMMANDS } from '../skills/browse/src/commands';
-import { SNAPSHOT_FLAGS } from '../skills/browse/src/snapshot';
+import { ALL_COMMANDS, COMMAND_DESCRIPTIONS, READ_COMMANDS, WRITE_COMMANDS, META_COMMANDS } from '../skills/avad-browse/src/commands';
+import { SNAPSHOT_FLAGS } from '../skills/avad-browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -22,7 +22,7 @@ const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
 
 // All avadbot skills that contain $B browse commands
 const BROWSE_SKILLS = [
-  { dir: 'browse', name: 'browse' },
+  { dir: 'avad-browse', name: 'avad-browse' },
   { dir: 'avad-qa', name: 'avad-qa' },
 ];
 

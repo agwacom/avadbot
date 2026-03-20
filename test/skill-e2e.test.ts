@@ -11,7 +11,7 @@ import type { SkillTestResult } from './helpers/session-runner';
 import { outcomeJudge } from './helpers/llm-judge';
 import { EvalCollector } from './helpers/eval-store';
 import type { EvalTestEntry } from './helpers/eval-store';
-import { startTestServer } from '../skills/browse/test/test-server';
+import { startTestServer } from '../skills/avad-browse/test/test-server';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -48,7 +48,7 @@ function recordE2E(name: string, suite: string, result: SkillTestResult, extra?:
 
 let testServer: ReturnType<typeof startTestServer>;
 let tmpDir: string;
-const browseBin = path.resolve(ROOT, 'skills', 'browse', 'dist', 'browse');
+const browseBin = path.resolve(ROOT, 'skills', 'avad-browse', 'dist', 'avad-browse');
 
 function copyDirSync(src: string, dest: string) {
   fs.mkdirSync(dest, { recursive: true });
@@ -64,13 +64,13 @@ function copyDirSync(src: string, dest: string) {
 }
 
 function setupBrowseShims(dir: string) {
-  const binDir = path.join(dir, 'browse', 'dist');
+  const binDir = path.join(dir, 'avad-browse', 'dist');
   fs.mkdirSync(binDir, { recursive: true });
   if (fs.existsSync(browseBin)) {
-    fs.symlinkSync(browseBin, path.join(binDir, 'browse'));
+    fs.symlinkSync(browseBin, path.join(binDir, 'avad-browse'));
   }
 
-  const findBrowseDir = path.join(dir, 'browse', 'bin');
+  const findBrowseDir = path.join(dir, 'avad-browse', 'bin');
   fs.mkdirSync(findBrowseDir, { recursive: true });
   fs.writeFileSync(
     path.join(findBrowseDir, 'find-browse'),
@@ -605,8 +605,8 @@ Write your retrospective report to ${retroDir}/retro-output.md`,
 
 describeE2E('Deferred skill E2E', () => {
   test.todo('/avad-ship completes full workflow');
-  // TODO: Add real E2E test proving /browse handles cookie import via cookie-import-browser command
-  test.todo('/browse cookie-import-browser invoked for cookie setup');
+  // TODO: Add real E2E test proving /avad-browse handles cookie import via cookie-import-browser command
+  test.todo('/avad-browse cookie-import-browser invoked for cookie setup');
 });
 
 // Finalize eval collector

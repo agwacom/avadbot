@@ -32,7 +32,7 @@ to `~/.avadbot/evals/` with auto-comparison against the previous run.
 ```
 avadbot/
 ├── .claude-plugin/
-│   ├── plugin.json              # Plugin manifest (v2.5.0)
+│   ├── plugin.json              # Plugin manifest (v2.5.1)
 │   └── marketplace.json         # Marketplace discovery manifest
 ├── CLAUDE.md                    # This file — project instructions
 ├── README.md                    # Documentation
@@ -58,7 +58,7 @@ avadbot/
 │   ├── avad-debug/              # /avadbot:avad-debug — systematic root-cause debugger
 │   ├── avad-document-release/   # /avadbot:avad-document-release — post-ship doc updater
 │   ├── avad-help/               # /avadbot:avad-help — skill hub, routing, update check
-│   └── browse/                  # Headless browser CLI (Playwright)
+│   └── avad-browse/             # /avadbot:avad-browse — Headless browser CLI (Playwright)
 │       ├── src/                 # CLI + server + commands
 │       │   ├── commands.ts      # Command registry (single source of truth)
 │       │   └── snapshot.ts      # SNAPSHOT_FLAGS metadata array
@@ -87,12 +87,12 @@ avadbot/
 
 SKILL.md files are **generated** from `.tmpl` templates. To update docs:
 
-1. Edit the `.tmpl` file in `skills/<name>/` (e.g. `skills/avad-review/SKILL.md.tmpl` or `skills/browse/SKILL.md.tmpl`)
+1. Edit the `.tmpl` file in `skills/<name>/` (e.g. `skills/avad-review/SKILL.md.tmpl` or `skills/avad-browse/SKILL.md.tmpl`)
 2. Run `bun run gen:skill-docs` (or `bun run build` which does it automatically)
 3. Commit both the `.tmpl` and generated `.md` files
 
-To add a new browse command: add it to `skills/browse/src/commands.ts` and rebuild.
-To add a snapshot flag: add it to `SNAPSHOT_FLAGS` in `skills/browse/src/snapshot.ts` and rebuild.
+To add a new browse command: add it to `skills/avad-browse/src/commands.ts` and rebuild.
+To add a snapshot flag: add it to `SNAPSHOT_FLAGS` in `skills/avad-browse/src/snapshot.ts` and rebuild.
 
 ## Skill development guidelines
 
@@ -138,7 +138,7 @@ Proactively flag:
 ## Browser interaction
 
 When you need to interact with a browser (QA, dogfooding, cookie setup), use the
-`/avadbot:browse` skill or run the browse binary directly via `$B <command>`. NEVER use
+`/avadbot:avad-browse` skill or run the browse binary directly via `$B <command>`. NEVER use
 `mcp__claude-in-chrome__*` tools — they are slow, unreliable, and not what this
 project uses.
 
@@ -146,7 +146,7 @@ project uses.
 
 Skills are stateless and designed for concurrent execution via Conductor.
 Each workspace maintains its own browser process, cookies, and logs — sessions
-do not share state. `/avadbot:browse`, `/avadbot:avad-qa`, `/avadbot:avad-review`, and `/avadbot:avad-ship`
+do not share state. `/avadbot:avad-browse`, `/avadbot:avad-qa`, `/avadbot:avad-review`, and `/avadbot:avad-ship`
 can all run in parallel across separate workspaces without interference.
 
 ## Development modes

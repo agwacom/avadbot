@@ -8,7 +8,7 @@
     {
       "name": "avadbot",
       "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, debugging, documentation, browser automation, and engineering retrospectives. Works with any project, any language, any framework.",
-      "version": "2.5.0",
+      "version": "2.5.1",
       "author": {
         "name": "Naif",
         "email": "naif@agwa.com"

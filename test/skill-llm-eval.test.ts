@@ -23,7 +23,7 @@ const evalCollector = evalsEnabled ? new EvalCollector('llm-judge') : null;
 
 // Skills to evaluate documentation quality
 const SKILLS_TO_EVAL = [
-  { dir: 'browse', name: 'browse', sections: ['## Snapshot', '## Command Reference', '## Tips'] },
+  { dir: 'avad-browse', name: 'avad-browse', sections: ['## Snapshot', '## Command Reference', '## Tips'] },
   { dir: 'avad-qa', name: 'avad-qa', sections: ['## Workflow', '## Health Score'] },
   { dir: 'avad-review', name: 'avad-review', sections: [] },
   { dir: 'avad-ship', name: 'avad-ship', sections: [] },
@@ -62,7 +62,7 @@ describeEval('Skill documentation quality evals', () => {
 
 // Browse-specific quality evals (command reference, snapshot flags)
 describeEval('Browse documentation quality evals', () => {
-  const browseSkillPath = path.join(ROOT, 'skills', 'browse', 'SKILL.md');
+  const browseSkillPath = path.join(ROOT, 'skills', 'avad-browse', 'SKILL.md');
   if (!fs.existsSync(browseSkillPath)) return;
   const browseContent = fs.readFileSync(browseSkillPath, 'utf-8');
 
@@ -218,7 +218,7 @@ describeEval('Baseline score pinning', () => {
     const baselines = JSON.parse(fs.readFileSync(baselinesPath, 'utf-8'));
     const regressions: string[] = [];
 
-    const browseSkillPath = path.join(ROOT, 'skills', 'browse', 'SKILL.md');
+    const browseSkillPath = path.join(ROOT, 'skills', 'avad-browse', 'SKILL.md');
     if (!fs.existsSync(browseSkillPath)) return;
     const skillContent = fs.readFileSync(browseSkillPath, 'utf-8');
 

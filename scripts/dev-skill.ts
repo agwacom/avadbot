@@ -13,8 +13,8 @@ import * as path from 'path';
 
 const ROOT = path.resolve(import.meta.dir, '..');
 const SKILLS_SCAN_DIR = path.join(ROOT, 'skills');
-const BROWSE_COMMANDS_PATH = path.join(ROOT, 'skills', 'browse', 'src', 'commands.ts');
-const BROWSE_SNAPSHOT_PATH = path.join(ROOT, 'skills', 'browse', 'src', 'snapshot.ts');
+const BROWSE_COMMANDS_PATH = path.join(ROOT, 'skills', 'avad-browse', 'src', 'commands.ts');
+const BROWSE_SNAPSHOT_PATH = path.join(ROOT, 'skills', 'avad-browse', 'src', 'snapshot.ts');
 
 // ─── Auto-discover templates ────────────────────────────────
 

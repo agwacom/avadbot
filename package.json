@@ -1,18 +1,18 @@
 {
   "name": "avadbot",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "private": true,
   "type": "module",
   "bin": {
-    "browse": "./skills/browse/dist/browse"
+    "avad-browse": "./skills/avad-browse/dist/avad-browse"
   },
   "scripts": {
-    "build": "bun run gen:skill-docs && bun build --compile skills/browse/src/cli.ts --outfile skills/browse/dist/browse && bun build --compile skills/browse/src/find-browse.ts --outfile skills/browse/dist/find-browse && git rev-parse HEAD > skills/browse/dist/.version && rm -f .*.bun-build",
+    "build": "bun run gen:skill-docs && bun build --compile skills/avad-browse/src/cli.ts --outfile skills/avad-browse/dist/avad-browse && bun build --compile skills/avad-browse/src/find-browse.ts --outfile skills/avad-browse/dist/find-browse && git rev-parse HEAD > skills/avad-browse/dist/.version && rm -f .*.bun-build",
     "gen:skill-docs": "bun run scripts/gen-skill-docs.ts",
-    "dev": "bun run skills/browse/src/cli.ts",
-    "server": "bun run skills/browse/src/server.ts",
-    "start": "bun run skills/browse/src/server.ts",
-    "test": "bun test skills/browse/test/ test/ --ignore test/skill-e2e.test.ts --ignore test/skill-llm-eval.test.ts",
+    "dev": "bun run skills/avad-browse/src/cli.ts",
+    "server": "bun run skills/avad-browse/src/server.ts",
+    "start": "bun run skills/avad-browse/src/server.ts",
+    "test": "bun test skills/avad-browse/test/ test/ --ignore test/skill-e2e.test.ts --ignore test/skill-llm-eval.test.ts",
     "test:evals": "EVALS=1 bun test test/skill-llm-eval.test.ts test/skill-e2e.test.ts",
     "test:e2e": "EVALS=1 bun test test/skill-e2e.test.ts",
     "skill:check": "bun run scripts/skill-check.ts",

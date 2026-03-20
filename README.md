@@ -18,7 +18,7 @@ Works with any project, any language, any framework.
 | `/avad-debug` | Systematic debugger. Root cause investigation, pattern analysis, hypothesis testing. |
 | `/avad-document-release` | Post-ship docs. Cross-references the diff, updates all project documentation. |
 | `/avad-help` | Skill hub. Shows available skills, recommends the right one, checks for updates. |
-| `/browse` | Headless browser. Navigate, click, screenshot, assert — ~100ms per command. |
+| `/avad-browse` | Headless browser. Navigate, click, screenshot, assert — ~100ms per command. |
 
 ## How it works
 
@@ -149,7 +149,7 @@ Post-ship documentation updater. Run after shipping code to ensure all docs matc
 
 Skill hub: shows all available avadbot skills, helps pick the right one, and checks for updates. Context-aware — describe what you want to do and it recommends the best skill.
 
-### `/browse`
+### `/avad-browse`
 
 Headless Chromium browser, ~100ms per command. Auto-starts on first use, persists between calls.
 
@@ -174,7 +174,7 @@ $B is visible ".success-toast"
 $B is enabled "#submit-btn"
 ```
 
-For the full command reference, see [skills/browse/SKILL.md](skills/browse/SKILL.md).
+For the full command reference, see [skills/avad-browse/SKILL.md](skills/avad-browse/SKILL.md).
 
 ## Install
 
@@ -185,7 +185,7 @@ claude plugin marketplace add agwacom/avadbot
 claude plugin install avadbot
 ```
 
-Skills are auto-discovered and namespaced as `/avadbot:avad-review`, `/avadbot:browse`, etc.
+Skills are auto-discovered and namespaced as `/avadbot:avad-review`, `/avadbot:avad-browse`, etc.
 
 ### Local plugin install
 
@@ -208,7 +208,7 @@ Add to your `~/.claude/CLAUDE.md`:
 ```markdown
 ## avadbot
 
-Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /browse
+Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /avad-browse
 ```
 
 ### Migrating from legacy install
@@ -225,6 +225,7 @@ rm -rf ~/.claude/skills/avad-retro
 rm -rf ~/.claude/skills/avad-debug
 rm -rf ~/.claude/skills/avad-document-release
 rm -rf ~/.claude/skills/avad-help
+rm -rf ~/.claude/skills/avad-browse
 rm -rf ~/.claude/skills/browse
 ```
 

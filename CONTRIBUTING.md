@@ -39,14 +39,14 @@ avadbot/                         <- your working tree
 ├── .claude/skills/              <- created by dev-setup (gitignored)
 │   ├── avad-review -> ../../skills/avad-review
 │   ├── avad-ship -> ../../skills/avad-ship
-│   ├── browse -> ../../skills/browse
+│   ├── avad-browse -> ../../skills/avad-browse
 │   └── ...                      <- one symlink per skill
 ├── skills/
 │   ├── avad-review/
 │   │   └── SKILL.md             <- edit this, test with /avad-review
 │   ├── avad-ship/
 │   │   └── SKILL.md
-│   ├── browse/
+│   ├── avad-browse/
 │   │   ├── src/                 <- TypeScript source
 │   │   └── dist/                <- compiled binary (gitignored)
 │   └── ...
@@ -65,7 +65,7 @@ vim skills/avad-review/SKILL.md
 # 3. Test it in Claude Code — changes are live
 #    > /avad-review
 
-# 4. Editing browse source? Rebuild the binary
+# 4. Editing avad-browse source? Rebuild the binary
 bun run build
 
 # 5. Done for the day? Tear down
@@ -105,7 +105,7 @@ bun run test:evals           # Tier 2 + 3 combined (~$4/run)
 
 Runs automatically with `bun test`. No API keys needed.
 
-- **Skill parser tests** (`test/skill-parser.test.ts`) — Extracts every `$B` command from SKILL.md bash code blocks and validates against the command registry in `skills/browse/src/commands.ts`. Catches typos, removed commands, and invalid snapshot flags.
+- **Skill parser tests** (`test/skill-parser.test.ts`) — Extracts every `$B` command from SKILL.md bash code blocks and validates against the command registry in `skills/avad-browse/src/commands.ts`. Catches typos, removed commands, and invalid snapshot flags.
 - **Skill validation tests** (`test/skill-validation.test.ts`) — Validates that SKILL.md files reference only real commands and flags, and that command descriptions meet quality thresholds.
 - **Generator tests** (`test/gen-skill-docs.test.ts`) — Tests the template system: verifies placeholders resolve correctly, output includes value hints for flags, enriched descriptions for key commands.
 
@@ -171,7 +171,7 @@ SKILL.md files are **generated** from `.tmpl` templates. Don't edit the `.md` di
 
 ```bash
 # 1. Edit the template
-vim skills/avad-review/SKILL.md.tmpl     # or skills/browse/SKILL.md.tmpl
+vim skills/avad-review/SKILL.md.tmpl     # or skills/avad-browse/SKILL.md.tmpl
 
 # 2. Regenerate
 bun run gen:skill-docs
@@ -183,12 +183,12 @@ bun run skill:check
 bun run dev:skill
 ```
 
-To add a browse command, add it to `skills/browse/src/commands.ts`. To add a snapshot flag, add it to `SNAPSHOT_FLAGS` in `skills/browse/src/snapshot.ts`. Then rebuild.
+To add a browse command, add it to `skills/avad-browse/src/commands.ts`. To add a snapshot flag, add it to `SNAPSHOT_FLAGS` in `skills/avad-browse/src/snapshot.ts`. Then rebuild.
 
 ## Things to know
 
 - **SKILL.md files are generated.** Edit the `.tmpl` template in `skills/<name>/`, not the `.md`. Run `bun run gen:skill-docs` to regenerate.
-- **Browse source changes need a rebuild.** If you touch `skills/browse/src/*.ts`, run `bun run build`.
+- **Browse source changes need a rebuild.** If you touch `skills/avad-browse/src/*.ts`, run `bun run build`.
 - **Dev mode shadows your global install.** Project-local skills take priority over `~/.claude/skills/`. `bin/dev-teardown` restores the global ones.
 - **`.claude/skills/` is gitignored.** The symlinks never get committed.
 - **No `/reload-plugins`.** Plugin discovery happens at session startup only. In dev mode this doesn't matter (symlinks are live). In plugin mode, restart the session after changes.

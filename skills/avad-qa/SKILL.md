@@ -1,6 +1,6 @@
 ---
 name: avad-qa
-version: 2.5.0
+version: 2.5.1
 description: |
   Systematically QA test a web application and fix bugs found. Runs QA testing,
   then iteratively fixes bugs in source code, committing each fix atomically and
@@ -64,16 +64,20 @@ If the tree is dirty AND the user did NOT pass `--report-only`, warn but continu
 ```bash
 _ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 B=""
-# 1. Project-local plugin structure (avadbot IS the project root)
-[ -n "$_ROOT" ] && [ -x "$_ROOT/skills/browse/dist/browse" ] && B="$_ROOT/skills/browse/dist/browse"
-# 1b. Plugin subdirectory (--plugin-dir ./avadbot from parent project)
-[ -z "$B" ] && [ -n "$_ROOT" ] && for _D in "$_ROOT"/*/skills/browse/dist/browse; do [ -x "$_D" ] && B="$_D" && break; done
-# 2-5. Legacy cascade
+# Primary tiers — new name (7 tiers)
+[ -n "$_ROOT" ] && [ -x "$_ROOT/skills/avad-browse/dist/avad-browse" ] && B="$_ROOT/skills/avad-browse/dist/avad-browse"
+[ -z "$B" ] && [ -n "$_ROOT" ] && for _D in "$_ROOT"/*/skills/avad-browse/dist/avad-browse; do [ -x "$_D" ] && B="$_D" && break; done
+[ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avad-browse/dist/avad-browse" ] && B="$_ROOT/.claude/skills/avad-browse/dist/avad-browse"
+[ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/avad-browse/dist/avad-browse" ] && B="$_ROOT/.claude/skills/avadbot/avad-browse/dist/avad-browse"
+[ -z "$B" ] && [ -x ~/.claude/skills/avad-browse/dist/avad-browse ] && B=~/.claude/skills/avad-browse/dist/avad-browse
+[ -z "$B" ] && [ -x ~/.claude/skills/avadbot/avad-browse/dist/avad-browse ] && B=~/.claude/skills/avadbot/avad-browse/dist/avad-browse
+[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/avad-browse/dist/avad-browse; do [ -x "$_P" ] && B="$_P" && break; done
+# Legacy fallbacks — old name (backward compat, 6 tiers)
+[ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/skills/browse/dist/browse" ] && B="$_ROOT/skills/browse/dist/browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/browse/dist/browse" ] && B="$_ROOT/.claude/skills/browse/dist/browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/browse/dist/browse" ] && B="$_ROOT/.claude/skills/avadbot/browse/dist/browse"
 [ -z "$B" ] && [ -x ~/.claude/skills/browse/dist/browse ] && B=~/.claude/skills/browse/dist/browse
 [ -z "$B" ] && [ -x ~/.claude/skills/avadbot/browse/dist/browse ] && B=~/.claude/skills/avadbot/browse/dist/browse
-# 6. Marketplace plugin install (new)
 [ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/browse/dist/browse; do [ -x "$_P" ] && B="$_P" && break; done
 if [ -x "$B" ]; then
   echo "READY: $B"

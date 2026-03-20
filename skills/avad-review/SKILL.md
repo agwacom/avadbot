@@ -1,6 +1,6 @@
 ---
 name: avad-review
-version: 2.5.0
+version: 2.5.1
 description: |
   Pre-landing code review. Analyzes diff for structural issues using a project-specific
   checklist. Two modes: local (review current branch) or PR (review and comment on a

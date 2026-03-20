@@ -10,8 +10,8 @@
  */
 
 import { describe, test, expect } from 'bun:test';
-import { ALL_COMMANDS, COMMAND_DESCRIPTIONS } from '../skills/browse/src/commands';
-import { SNAPSHOT_FLAGS } from '../skills/browse/src/snapshot';
+import { ALL_COMMANDS, COMMAND_DESCRIPTIONS } from '../skills/avad-browse/src/commands';
+import { SNAPSHOT_FLAGS } from '../skills/avad-browse/src/snapshot';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
@@ -87,11 +87,11 @@ describe('Browse setup cascade', () => {
     if (!outputContent.includes('SETUP')) continue;
 
     test(`${tmpl.dir}/SKILL.md has project-local path as first tier`, () => {
-      expect(outputContent).toContain('$_ROOT/skills/browse/dist/browse');
+      expect(outputContent).toContain('$_ROOT/skills/avad-browse/dist/avad-browse');
     });
 
     test(`${tmpl.dir}/SKILL.md has marketplace path as final tier`, () => {
-      expect(outputContent).toContain('~/.claude/plugins/*/skills/browse/dist/browse');
+      expect(outputContent).toContain('~/.claude/plugins/*/skills/avad-browse/dist/avad-browse');
     });
   }
 });
@@ -110,7 +110,7 @@ describe('Freshness check', () => {
 
 describe('Command reference quality', () => {
   // Only run if browse/SKILL.md exists (has COMMAND_REFERENCE)
-  const browsePath = path.join(SKILLS_DIR, 'browse', 'SKILL.md');
+  const browsePath = path.join(SKILLS_DIR, 'avad-browse', 'SKILL.md');
   if (!fs.existsSync(browsePath)) return;
   const browseContent = fs.readFileSync(browsePath, 'utf-8');
 
@@ -169,7 +169,7 @@ describe('Command reference quality', () => {
 });
 
 describe('Snapshot flags quality', () => {
-  const browsePath = path.join(SKILLS_DIR, 'browse', 'SKILL.md');
+  const browsePath = path.join(SKILLS_DIR, 'avad-browse', 'SKILL.md');
   if (!fs.existsSync(browsePath)) return;
   const browseContent = fs.readFileSync(browsePath, 'utf-8');
 

@@ -5,17 +5,17 @@ set -e
 AVADBOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_DIR="$AVADBOT_DIR/skills"
 CLAUDE_SKILLS="$HOME/.claude/skills"
-BROWSE_BIN="$SKILLS_DIR/browse/dist/browse"
+BROWSE_BIN="$SKILLS_DIR/avad-browse/dist/avad-browse"
 
 # 1. Ensure ~/.claude/skills/ exists
 mkdir -p "$CLAUDE_SKILLS"
 
 # 2. Build browse binary if needed
-if [ -d "$SKILLS_DIR/browse/src" ]; then
+if [ -d "$SKILLS_DIR/avad-browse/src" ]; then
   NEEDS_BUILD=0
   if [ ! -x "$BROWSE_BIN" ]; then
     NEEDS_BUILD=1
-  elif [ -n "$(find "$SKILLS_DIR/browse/src" -type f -newer "$BROWSE_BIN" -print -quit 2>/dev/null)" ]; then
+  elif [ -n "$(find "$SKILLS_DIR/avad-browse/src" -type f -newer "$BROWSE_BIN" -print -quit 2>/dev/null)" ]; then
     NEEDS_BUILD=1
   fi
 
@@ -29,7 +29,7 @@ if [ -d "$SKILLS_DIR/browse/src" ]; then
     (
       cd "$AVADBOT_DIR"
       bun install
-      bun build --compile skills/browse/src/cli.ts --outfile skills/browse/dist/browse
+      bun build --compile skills/avad-browse/src/cli.ts --outfile skills/avad-browse/dist/avad-browse
     )
   fi
 
@@ -62,7 +62,7 @@ done
 # Guard: ensure at least one skill was found
 if [ ${#installed[@]} -eq 0 ]; then
   echo "ERROR: No skills found in $SKILLS_DIR/*/SKILL.md" >&2
-  echo "Expected: avad-ship, avad-review, avad-qa, browse, ..." >&2
+  echo "Expected: avad-ship, avad-review, avad-qa, avad-browse, ..." >&2
   exit 1
 fi
 
@@ -71,6 +71,9 @@ rm -rf "$CLAUDE_SKILLS/setup-browser-cookies"
 
 # One-time migration: remove avad-qa-report (merged into avad-qa 1.1.4)
 rm -rf "$CLAUDE_SKILLS/avad-qa-report"
+
+# One-time migration: remove old browse/ (renamed to avad-browse 2.5.1)
+[ -f "$CLAUDE_SKILLS/browse/.avadbot-managed" ] && rm -rf "$CLAUDE_SKILLS/browse"
 
 # 4. Prune avadbot skills that no longer exist in source
 for installed_dir in "$CLAUDE_SKILLS"/*/; do
@@ -88,7 +91,7 @@ mkdir -p "$HOME/.avadbot/projects"
 echo ""
 echo "avadbot ready."
 if [ -x "$BROWSE_BIN" ]; then
-  echo "  browse: $BROWSE_BIN"
+  echo "  avad-browse: $BROWSE_BIN"
 fi
 if [ ${#installed[@]} -gt 0 ]; then
   echo "  installed: ${installed[*]}"

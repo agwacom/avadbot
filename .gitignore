@@ -1,5 +1,5 @@
 node_modules/
 .claude/skills/
-browse/dist/
+**/avad-browse/dist/
 *.bun-build
 .env

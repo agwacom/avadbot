@@ -2,6 +2,20 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.5.1] - 2026-03-20
+
+### Changed
+- **Renamed:** `browse` → `avad-browse` — naming consistency with all other skills
+
+### Fixed
+- Pre-landing review: 20+ stale `browse/` paths in BROWSER.md, stale path in ARCHITECTURE.md, version mismatch in setup comment, `.gitignore` pattern, stale TODO comment, removed dead 60MB binary
+- `find-browse.ts`: added missing `--plugin-dir` subdirectory tier and fixed tier ordering to match `$B` cascade (local before global)
+
+### Added
+- **Execution plan:** `browse` → `avad-browse` rename — detailed plan with eng review, covering 24 files, discovery cascade (7 primary + 5 legacy tiers), test updates, and full documentation cross-references
+- **Skill rename checklist:** `doc/skilltools/skill-rename-checklist.md` — 18-item checklist derived from the browse rename lessons
+- **Skill quality checklist restructured:** split into general vs avadbot-specific sections, added plugin manifest sync, package.json paths, and `.gitignore` alignment checks
+
 ## [2.5.0] - 2026-03-19
 
 ### Added
