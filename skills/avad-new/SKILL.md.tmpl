@@ -1,0 +1,750 @@
+---
+name: avad-new
+version: {{VERSION}}
+description: |
+  Start a new project the right way. Asks 5 product questions (problem, user,
+  30-day goal, project type, stack), then generates 16 pre-filled files —
+  not empty skeletons. PRD.md has your problem statement, README.md has your
+  audience, TODOS.md has your milestone broken into tasks. Detects tech stack,
+  creates GitHub repo, and chains into design consultation or CEO review.
+  Use when starting a new project from scratch, scaffolding a project,
+  or "init a project".
+  Do NOT use for adding features to existing projects, creating skills
+  (use /avad-add-skill), or upgrading from gstack (use /avad-gstack-upgrade).
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Glob
+  - AskUserQuestion
+  - mcp__context7__resolve-library-id
+  - mcp__context7__query-docs
+---
+
+# /avad-new — Project Scaffolding (10 phases)
+
+Start a new project the right way. This skill thinks like a CEO — it forces product clarity
+**before** writing a single file. The output is 16 **pre-filled** project files, not empty
+skeletons waiting to be filled.
+
+**Principle:** Every question avad-new asks makes the generated files smarter. If a question
+doesn't improve the output, don't ask it.
+
+---
+
+## UX: Recommendations
+
+Every time the skill presents options (AskUserQuestion), it must:
+
+1. **Header line:** `avad Recommends: {LETTER}` (always English, always first)
+2. **In the question text:** State the recommendation in the user's language
+3. **In the recommended option:** Tag it with `(avad's pick)` matching user's language
+4. **Options text:** In the user's language
+
+Never present options without a recommendation. If genuinely neutral, pick the safer/simpler option.
+
+## Language Rules
+
+- **Conversation with user:** Always in the user's native/primary language (auto-detected from their first message). Unless the user explicitly requests otherwise.
+- **All generated project files:** Always in English. No exceptions — code, docs, comments, commit messages, PR descriptions are all English.
+- This rule is written into the generated `AGENTS.md` so all AI models (Claude, GPT, Gemini, Codex) follow it.
+
+---
+
+## Phase 0: File Audit
+
+Scan all 16 target files before doing anything else. Show a map and let the user decide.
+
+1. **Scan:** Glob for all 16 files:
+   `.gitignore`, `VERSION`, `PRD.md`, `CLAUDE.md`, `DESIGN.md`, `docs/ARCHITECTURE.md`,
+   `docs/adr/001-initial-project-setup.md`, `docs/GIT_WORKFLOW.md`, `SECURITY.md`,
+   `TODOS.md`, `README.md`, `.env.example`, `AGENTS.md`, `CHANGELOG.md`, `LICENSE`,
+   `.github/workflows/ci.yml`
+
+2. **Display map:**
+   ```
+   Project File Audit
+
+   .gitignore           — exists
+   README.md            — exists
+   CLAUDE.md            — missing
+   AGENTS.md            — missing
+   PRD.md               — missing
+   VERSION              — exists (0.1.0)
+   docs/ARCHITECTURE.md — missing
+   docs/GIT_WORKFLOW.md — missing
+   ...
+
+   Found: 4/16 | Missing: 12/16
+   ```
+
+3. **Decision:**
+   - If **all 16 exist** → "All project files already exist. Nothing to create." → stop
+   - If **some exist** → AskUserQuestion:
+     ```
+     avad Recommends: A
+
+     A) Create the N missing files (avad's pick)
+     B) Let me pick one by one
+     C) Cancel
+     ```
+   - If **none exist** → proceed directly to Phase 1
+
+---
+
+## Phase 1: Git Init
+
+Check if the current directory is a git repository:
+
+```bash
+git rev-parse --is-inside-work-tree 2>/dev/null || echo "NOT_GIT"
+```
+
+- If **NOT a git repo** → run `git init && git branch -m main`
+- If **already a git repo** → continue silently
+
+---
+
+## Phase 2: Product Discovery (5 questions)
+
+This phase forces the user to articulate their product thinking before any code exists.
+The answers directly feed into generated file content — nothing is wasted.
+
+Ask each question via AskUserQuestion:
+
+1. **Project name + one-line description**
+2. **What problem does this solve?** (1-2 sentences) → feeds PRD.md Problem section, README.md opener
+3. **Who is the primary user?** (persona or role) → feeds PRD.md Users section, README.md audience
+4. **What does success look like in 30 days?** (concrete milestone) → feeds PRD.md Metrics section, TODOS.md priorities
+5. **Project type:**
+   ```
+   avad Recommends: A
+
+   A) Web App (avad's pick)
+   B) CLI Tool
+   C) API Service
+   D) Library
+   E) Other
+   ```
+   Each preset adjusts template detail levels (e.g., CLI Tool → richer README with usage examples,
+   API Service → ARCHITECTURE.md with endpoint skeleton).
+
+**License** defaults to MIT. Only ask if the user's answers suggest proprietary/commercial context.
+
+---
+
+## Phase 3: Product Clarity Gate (CEO mindset)
+
+Before moving to tech stack, challenge the product thinking — same instinct as `/avad-plan-ceo-review`.
+The goal: catch weak foundations **before** 16 files get written.
+
+**Step 1: Reflect back**
+```
+Here's what I understand:
+- Problem: {problem}
+- User: {user}
+- 30-day goal: {milestone}
+- Type: {preset}
+```
+
+**Step 2: Challenge (if needed)**
+
+Run these checks silently. Only surface issues that fail:
+
+| Check | Trigger | Challenge |
+|-------|---------|-----------|
+| Vague problem | Problem statement has no specific pain point | "Who has this problem today and how do they solve it without your product?" |
+| No clear user | User is too broad ("everyone", "developers") | "Pick ONE person. What's their job title? What frustrates them?" |
+| Unrealistic 30-day goal | Goal requires 3+ major systems | "That's ambitious for 30 days. What's the ONE thing that proves the idea works?" |
+| Solution-first | Problem describes a feature, not a pain | "That's a solution. What's the problem it solves? Who feels that pain?" |
+
+If all checks pass → "Your product thinking is clear. Moving to tech stack." → proceed to Phase 4.
+
+If any check triggers → ask the challenging question via AskUserQuestion. Loop until clear (max 2 rounds).
+After 2 rounds, proceed anyway — don't block forever.
+
+**Step 3: Confirm**
+```
+avad Recommends: A
+
+A) Yes, continue (avad's pick)
+B) Edit something
+C) Start over
+```
+
+---
+
+## Phase 4: Tech Stack Detection + Research
+
+- Check for existing manifest files:
+  ```bash
+  ls package.json Gemfile go.mod Cargo.toml pyproject.toml requirements.txt composer.json mix.exs 2>/dev/null
+  ```
+- If detected → tailor `.gitignore`, `docs/ARCHITECTURE.md`, and `.github/workflows/ci.yml` to the stack
+- If not detected → ask: "What language/framework?" then use appropriate template
+
+**context7 research (if available):**
+- Use `mcp__context7__resolve-library-id` to find the detected framework
+- Use `mcp__context7__query-docs` to fetch current project structure conventions, recommended patterns, and best practices
+- This makes ARCHITECTURE.md and CI workflow stack-accurate instead of generic
+- If context7 tools are unavailable, proceed with built-in knowledge
+
+---
+
+## Phase 5: Create 16 Files
+
+Each file skeleton is inline below. The skill substitutes user answers into real content — not
+placeholder comments. Content is adapted based on project type preset and detected tech stack.
+
+**Write safety:**
+- Before writing each file, check if it exists. In "fill gaps" mode, skip existing files.
+- Track all created files in a list (`created_files`) during Phase 5.
+- If a write fails mid-stream (e.g., permission denied, disk full), stop and report which files
+  were created vs. which remain. Do not attempt rollback — partial scaffolding is still useful
+  and the user can re-run in "fill gaps" mode to complete.
+
+### File 1: `.gitignore`
+
+Stack-aware template. Examples:
+
+**Node.js:**
+```
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+.next/
+coverage/
+```
+
+**Python:**
+```
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+```
+
+**Go:**
+```
+/bin/
+*.exe
+.env
+vendor/
+coverage.out
+```
+
+**Ruby:**
+```
+/vendor/bundle
+/.bundle
+.env
+log/
+tmp/
+coverage/
+```
+
+**Rust:**
+```
+/target
+.env
+Cargo.lock
+```
+
+**Universal (fallback):**
+```
+.env
+.env.local
+*.log
+.DS_Store
+```
+
+### File 2: `VERSION`
+
+```
+0.1.0
+```
+
+### File 3: `PRD.md`
+
+```markdown
+# {PROJECT_NAME} — Product Requirements
+
+## Problem
+
+{user's answer to Q2 — verbatim, not a placeholder}
+
+## Users
+
+{user's answer to Q3 — verbatim}
+
+## Success Metric (30-day)
+
+{user's answer to Q4 — verbatim}
+
+## Vision
+
+<!-- TODO: Where does this product go in 6-12 months? What's the big picture? -->
+
+## Features
+
+<!-- TODO: List the key features. For each, note: what it does, who it's for, and priority (P0/P1/P2). -->
+
+## Non-Goals
+
+<!-- TODO: What are you explicitly NOT building? This prevents scope creep. -->
+```
+
+### File 4: `CLAUDE.md`
+
+```markdown
+# {PROJECT_NAME}
+
+{one-line description from Q1}
+
+## Commands
+
+```bash
+# TODO: Add project commands (install, test, build, dev, lint)
+```
+
+## Project Structure
+
+```
+{PROJECT_NAME}/
+├── CLAUDE.md          # This file
+├── AGENTS.md          # Agent rules (language, do/don't)
+├── PRD.md             # Product requirements
+├── README.md          # Documentation
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── GIT_WORKFLOW.md
+│   └── adr/
+│       └── 001-initial-project-setup.md
+└── ...
+```
+
+See `AGENTS.md` for AI agent rules — all models (Claude, GPT, Gemini, Codex) read that file.
+```
+
+### File 5: `DESIGN.md`
+
+```markdown
+# {PROJECT_NAME} — Design System
+
+This file is the design source of truth for {PROJECT_NAME}.
+
+To create a complete design system (colors, typography, spacing, layout), run:
+```
+/avad-design-consultation
+```
+
+## Status
+
+Not yet created. Run the command above to generate.
+```
+
+### File 6: `docs/ARCHITECTURE.md`
+
+**Research phase (before writing):**
+- If context7 MCP tools are available: use `resolve-library-id` + `query-docs` to fetch current
+  docs for the detected framework (e.g., Next.js app router patterns, FastAPI project structure)
+- Research informs the data flow diagram, component list, and technical decisions
+
+**Generated sections:**
+
+1. **ASCII Data Flow Diagram** — auto-generated from project type preset:
+   - Web App: `Browser → [Frontend] → [API] → [Services] → [DB]`
+   - CLI Tool: `stdin → [Parser] → [Commands] → [Processor] → stdout`
+   - API Service: `Client → [Gateway] → [Auth] → [Routes] → [Services] → [DB]`
+   - Library: `Consumer → [Public API] → [Core] → [Internal Utils]`
+
+2. **Component Table:**
+   ```markdown
+   | Component | Responsibility | Risk |
+   |-----------|---------------|------|
+   | {component} | {responsibility} | {risk} |
+   ```
+
+3. **Open Technical Decisions:**
+   ```markdown
+   | # | Decision | Options | Recommendation |
+   |---|----------|---------|----------------|
+   | 1 | {decision} | {options} | {recommendation} |
+   ```
+
+4. **Failure Modes:**
+   ```markdown
+   | Component | Failure | User sees | Mitigation |
+   |-----------|---------|-----------|------------|
+   | {component} | {failure} | {visible/silent} | {mitigation} |
+   ```
+
+5. **30-day Scope Gate** — checks the component list against the user's 30-day goal and flags
+   anything that seems too ambitious.
+
+### File 7: `docs/adr/001-initial-project-setup.md`
+
+```markdown
+# ADR-001: Initial Project Setup
+
+## Status
+Accepted
+
+## Date
+{today's date}
+
+## Context
+{problem statement from Q2}. Target user: {user from Q3}.
+
+## Decision
+- Project type: {preset from Q5}
+- Tech stack: {detected or chosen stack}
+- Rationale: {brief rationale based on user's context}
+
+## Consequences
+- {consequence 1 based on stack choice}
+- {consequence 2 based on preset choice}
+```
+
+### File 8: `docs/GIT_WORKFLOW.md`
+
+Production-grade template with universal + project-adaptive sections.
+
+<!-- NOTE: The main+dev branch structure below is a recommended default.
+     Projects may adjust: solo projects can use main-only, teams may add
+     staging/release branches. The key is that protected branches and
+     merge strategy are documented. -->
+
+**Universal sections (copied as-is):**
+
+- **Branch Structure** (`main <- dev <- feature branches`, protection table)
+- **Sync Discipline** (fetch/checkout/pull before every branch operation)
+- **Commit Message Format** (Conventional Commits with type table: feat/fix/docs/chore/refactor/test)
+- **Merge Strategy** (squash to dev, merge commit to main, squash hotfix)
+- **Hotfix Flow** (confirm with user, branch from main, cherry-pick back to dev via PR)
+- **Secrets and Credentials** (no secrets in git, .env for local, rotate + filter-repo if leaked)
+- **AI Agent Rules** (do: branch from dev, conventional commits, run tests. don't: force push, skip tests, commit secrets)
+- **GitHub Settings** (protection rules table for main/dev)
+- **Quick Reference** (copy-paste bash commands)
+
+**Project-adaptive sections:**
+
+- **Scopes** — preset-aware defaults:
+  - Web App → `ui`, `api`, `auth`, `db`, `styles`
+  - CLI Tool → `cli`, `config`, `output`, `parse`
+  - API Service → `auth`, `routes`, `models`, `middleware`, `db`
+  - Library → `core`, `api`, `types`, `docs`
+  - Other → `core`, `config`, `docs`
+- **CI Checks** — references the `.github/workflows/ci.yml` generated in file #16
+- **CODEOWNERS** — skeleton with `<!-- TODO: customize -->` marker
+- **Governing Documents Protection** — included only if PRD.md is in the file list
+- **Version Numbering** — references VERSION file with semver rules
+
+### File 9: `SECURITY.md`
+
+```markdown
+# Security Policy — {PROJECT_NAME}
+
+## Reporting a Vulnerability
+
+If you discover a security vulnerability, please report it responsibly:
+
+1. **Do NOT** open a public issue
+2. Email: <!-- TODO: Add security contact email -->
+3. Include: description, reproduction steps, impact assessment
+
+## Security Practices
+
+- Dependencies reviewed before adding
+- Secrets stored in environment variables, never committed
+- `.env` files are gitignored
+- Input validation at system boundaries
+```
+
+### File 10: `TODOS.md`
+
+```markdown
+# {PROJECT_NAME} TODO
+
+## P0 (30-day milestone)
+- [ ] {30-day goal from Q4, broken into 3-5 actionable items}
+- [ ] ...
+
+## P1
+- [ ] Fill out PRD.md — add Vision, Features, and Non-Goals sections
+- [ ] Run /avad-design-consultation to create design system
+- [ ] Set up development environment and verify CI passes
+
+## P2
+- [ ] ...
+
+## Done
+```
+
+### File 11: `README.md`
+
+```markdown
+# {PROJECT_NAME}
+
+{problem statement from Q2 — written as the opener, not a placeholder}
+
+## Who is this for?
+
+{user persona from Q3}
+
+{preset-aware sections below}
+```
+
+**Preset-aware additions:**
+- CLI Tool → `## Usage` + `## Install` sections
+- API Service → `## Endpoints` + `## Auth` sections
+- Web App → `## Getting Started` + `## Development` sections
+- Library → `## Installation` + `## API` + `## Examples` sections
+
+### File 12: `.env.example`
+
+Stack-aware entries, all commented out:
+
+```bash
+# {PROJECT_NAME} environment variables
+# Copy this file to .env and fill in values
+
+# DATABASE_URL=postgresql://localhost:5432/{project_name}
+# API_KEY=
+# PORT=3000
+```
+
+### File 13: `AGENTS.md`
+
+```markdown
+# {PROJECT_NAME} — Agent Rules
+
+{one-line description}. Target user: {user persona from Q3}.
+
+## Language Rule
+
+- **All project files** (code, docs, comments, commit messages, PR descriptions): English only
+- **Conversation with user:** User's native language (auto-detected)
+- This rule applies to ALL AI models: Claude, GPT, Gemini, Codex, and any future model
+
+## Do
+
+- Read CLAUDE.md before starting any task
+- Read this file (AGENTS.md) for project context and rules
+- Follow commit message format in docs/GIT_WORKFLOW.md
+- Run tests before committing
+- Write regression tests when fixing bugs
+
+## Don't
+
+- Don't commit secrets, API keys, or credentials
+- Don't force push to main or dev
+- Don't skip tests or CI checks
+- Don't modify docs/GIT_WORKFLOW.md, AGENTS.md, or PRD.md without explicit user approval
+- Don't add dependencies without explaining why
+
+## Project File Map
+
+| File | Status | Source |
+|------|--------|--------|
+{generated from Phase 0 audit — shows which files were pre-existing vs created by /avad-new}
+```
+
+### File 14: `CHANGELOG.md`
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.1.0] - {today's date}
+
+### Added
+- Initial project scaffolding via /avad-new
+- Project documentation: PRD.md, ARCHITECTURE.md, GIT_WORKFLOW.md
+- CI/CD pipeline: .github/workflows/ci.yml
+```
+
+### File 15: `LICENSE`
+
+Full MIT license text with current year and project name. If user context suggests
+proprietary/commercial, use a minimal proprietary stub instead.
+
+### File 16: `.github/workflows/ci.yml`
+
+Stack-aware CI pipeline (lint + test, tailored to detected runtime):
+
+**Node.js example:**
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+```
+
+**Python example:**
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: pytest
+```
+
+Adapt for Go (`go test ./...`), Ruby (`bundle exec rake test`), Rust (`cargo test`), etc.
+
+---
+
+## Phase 6: Git Commit
+
+Stage only files in the `created_files` list (never `git add -A`):
+
+```bash
+git add {created_files}
+git commit -m "chore: initial project scaffolding via /avad-new"
+```
+
+---
+
+## Phase 7: GitHub Repo Creation (optional)
+
+**Pre-check:** Verify `gh` CLI is available:
+
+```bash
+command -v gh >/dev/null 2>&1 || echo "GH_NOT_FOUND"
+```
+
+If `GH_NOT_FOUND`: skip this phase silently with a note: "GitHub CLI (gh) not found — skipping repo creation. Install from https://cli.github.com/ to enable this."
+
+If `gh` is available:
+
+```
+avad Recommends: A
+
+A) Yes, private repo (avad's pick)
+B) Yes, public repo
+C) Skip
+```
+
+If yes:
+```bash
+gh repo create {PROJECT_NAME} --private/--public --source . --push
+```
+
+---
+
+## Phase 8: Smart Chaining (context-aware)
+
+Based on user answers, recommend the most valuable next step:
+
+- **If project type is Web App or has UI:** "Your project has a user-facing side. Run `/avad-design-consultation` to create your design system?" → AskUserQuestion with Yes (Recommended) | Skip
+- **If problem statement is vague or 30-day goal is ambitious:** "Your PRD could use more depth. Run `/avad-plan-ceo-review` to stress-test your product thinking?" → AskUserQuestion with Yes (Recommended) | Skip
+- **If ARCHITECTURE.md was generated with component table:** "Your ARCHITECTURE.md has a solid skeleton. Run `/avad-plan-eng-review` to stress-test the technical decisions?" → AskUserQuestion with Yes | Skip
+- **Otherwise:** Print next steps checklist:
+  - Flesh out PRD.md (Problem and Users are filled, add Features and Vision)
+  - Run `/avad-design-consultation` for design system
+  - Run `/avad-plan-eng-review` to validate architecture
+  - Run `/avad-plan-ceo-review` to challenge your plan
+
+---
+
+## Phase 9: Onboarding Summary
+
+Print a concise summary of what was created and why:
+
+```
+{PROJECT_NAME} initialized ({N} files)
+  Problem: {problem}
+  User: {user}
+  30-day goal: {milestone}
+  Stack: {stack}
+
+  Pre-filled: PRD.md, README.md, TODOS.md, ARCHITECTURE.md, ADR-001
+  Ready to customize: DESIGN.md, SECURITY.md, AGENTS.md
+
+  Next: {recommended skill} or start coding
+```
+
+---
+
+## Runtime Data
+
+This skill does NOT read from or write to `~/.avadbot/`. All output goes directly to the project directory.
+
+## Parallel Execution
+
+Not safe for concurrent runs in the same directory. Serial execution only.
+
+---
+
+## Rules
+
+1. Never `git add -A` — stage only created files
+2. All generated project files in English — no exceptions
+3. Conversation in the user's language
+4. Every AskUserQuestion shows `avad Recommends: {LETTER}`
+5. In fill-gaps mode, never overwrite existing files
+6. If a write fails, stop and report — don't attempt rollback
+7. License defaults to MIT unless user context suggests otherwise
+8. Never install dependencies — user does this after
+
+---
+
+## Agent Identity
+
+Use your full model name and version as your agent identifier in all GitHub output.
+Examples: "claude Opus 4.6", "codex o3", "gemini 2.5 Pro"
+
+## GitHub Output
+
+When creating or commenting on GitHub issues, discussions, or pull requests:
+
+1. **Title prefix:** Include the skill role in the title.
+   Format: `[avad-new] {short description}`
+   Example: `[avad-new] initial project scaffolding`
+
+2. **Labels:**
+   - Role label: `avad-new`
+   - Add any project-specific labels per the project's labeling convention.
+   - Create the label if it does not exist (color: `#1D76DB`, description: "Project scaffolding").
+
+3. **Both title prefix and label are required.**
+
+## Headings
+
+Prefix all comment, issue, discussion, and PR section headings with **your agent identity**.
+Example: "## **claude Opus 4.6** Project Scaffolding"
+
+## Signature
+
+End every GitHub issue, discussion post, PR description, review comment, or review response with a signature line:
+
+```
+---
+_Generated by {agent identity} · /avad-new · {YYYY-MM-DD}_
+```
+Example: `_Generated by claude Opus 4.6 · /avad-new · 2026-03-22_`
