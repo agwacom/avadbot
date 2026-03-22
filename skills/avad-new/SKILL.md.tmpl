@@ -16,6 +16,8 @@ allowed-tools:
   - Read
   - Write
   - Glob
+  - Grep
+  - Agent
   - AskUserQuestion
   - mcp__context7__resolve-library-id
   - mcp__context7__query-docs
@@ -45,50 +47,128 @@ Never present options without a recommendation. If genuinely neutral, pick the s
 
 ## Language Rules
 
-- **Conversation with user:** Always in the user's native/primary language (auto-detected from their first message). Unless the user explicitly requests otherwise.
+- **Conversation with user:** Always in the user's native/primary language (auto-detected from their first message). If the user writes in Arabic, respond in Arabic immediately — do not default to English first. Unless the user explicitly requests otherwise.
 - **All generated project files:** Always in English. No exceptions — code, docs, comments, commit messages, PR descriptions are all English.
 - This rule is written into the generated `AGENTS.md` so all AI models (Claude, GPT, Gemini, Codex) follow it.
 
+## Research Strategy
+
+When you need to search for files, scan the codebase, or gather context about the project:
+
+- **Prefer subagents (Agent tool)** for broad searches, multi-step research, or when you need to explore multiple directories. Launch an Agent with `subagent_type: "Explore"` for codebase exploration.
+- **Use Grep directly** for quick, targeted searches (specific string, known file pattern).
+- **Use Glob directly** for known file patterns.
+- This keeps the main conversation focused on user interaction while delegating research to background agents.
+
 ---
 
-## Phase 0: File Audit
+## Phase 0: Project Context Discovery
 
-Scan all 16 target files before doing anything else. Show a map and let the user decide.
+Scan the project broadly — not just the 16 target files but **any existing files** that
+provide context about the project (plans, docs, notes, prior scaffolding).
 
-1. **Scan:** Glob for all 16 files:
-   `.gitignore`, `VERSION`, `PRD.md`, `CLAUDE.md`, `DESIGN.md`, `docs/ARCHITECTURE.md`,
-   `docs/adr/001-initial-project-setup.md`, `docs/GIT_WORKFLOW.md`, `SECURITY.md`,
-   `TODOS.md`, `README.md`, `.env.example`, `AGENTS.md`, `CHANGELOG.md`, `LICENSE`,
-   `.github/workflows/ci.yml`
+### Step 1: Broad project scan
 
-2. **Display map:**
-   ```
-   Project File Audit
+Use an Agent (subagent_type: "Explore") to scan the entire project directory for context:
 
-   .gitignore           — exists
-   README.md            — exists
-   CLAUDE.md            — missing
-   AGENTS.md            — missing
-   PRD.md               — missing
-   VERSION              — exists (0.1.0)
-   docs/ARCHITECTURE.md — missing
-   docs/GIT_WORKFLOW.md — missing
-   ...
+- **Target files:** Check all 16 target files:
+  `.gitignore`, `VERSION`, `PRD.md`, `CLAUDE.md`, `DESIGN.md`, `docs/ARCHITECTURE.md`,
+  `docs/adr/001-initial-project-setup.md`, `docs/GIT_WORKFLOW.md`, `SECURITY.md`,
+  `TODOS.md`, `README.md`, `.env.example`, `AGENTS.md`, `CHANGELOG.md`, `LICENSE`,
+  `.github/workflows/ci.yml`
 
-   Found: 4/16 | Missing: 12/16
-   ```
+- **Context files:** Also search for any existing files that tell us about the project:
+  - Plans: `*plan*`, `*design*`, `*spec*`, `*proposal*`, `*brief*`
+  - Docs: `*.md`, `docs/**/*`, `doc/**/*`
+  - Config: `package.json`, `Gemfile`, `go.mod`, `Cargo.toml`, `pyproject.toml`, `*.config.*`
+  - Notes: `*notes*`, `*scratch*`, `*draft*`, `*ideas*`
+  - Existing code: scan top-level directories to understand project shape
 
-3. **Decision:**
-   - If **all 16 exist** → "All project files already exist. Nothing to create." → stop
-   - If **some exist** → AskUserQuestion:
-     ```
-     avad Recommends: A
+- **Read discovered context files** (up to 10 most relevant) to extract:
+  - Project name and description (if mentioned anywhere)
+  - Problem statement or goals
+  - Tech stack decisions
+  - Any prior scaffolding or planning work
 
-     A) Create the N missing files (avad's pick)
-     B) Let me pick one by one
-     C) Cancel
-     ```
-   - If **none exist** → proceed directly to Phase 1
+### Step 2: Display audit map
+
+```
+Project Context Discovery
+
+TARGET FILES:
+  .gitignore           — exists
+  README.md            — exists
+  CLAUDE.md            — missing
+  AGENTS.md            — missing
+  ...
+  Found: 4/16 | Missing: 12/16
+
+CONTEXT DISCOVERED:
+  docs/plan.md         — project plan (read)
+  notes/ideas.md       — feature brainstorm (read)
+  package.json         — Node.js project detected
+
+Pre-filled from context: project name, problem statement, tech stack
+```
+
+### Step 3: Decision
+
+- If **all 16 exist** → "All project files already exist. Nothing to create." → stop
+- If **some exist** → AskUserQuestion:
+  ```
+  avad Recommends: A
+
+  A) Create the N missing files (avad's pick)
+  B) Let me pick one by one
+  C) Cancel
+  ```
+- If **none exist** → proceed directly to Phase 0.5
+
+If context files were discovered, pre-fill Phase 2 answers where possible (project name,
+problem, user, stack) — the user can confirm or override during Product Discovery.
+
+---
+
+## Phase 0.5: Scaffolding Checklist (TODOS.md)
+
+Before creating any files, create a `TODOS.md` that tracks every file as a TODO item.
+This serves as both a progress tracker and a manifest of what will be created.
+
+**Create `TODOS.md` immediately** with all missing files from Phase 0:
+
+```markdown
+# {PROJECT_NAME} — Scaffolding Progress
+
+## File Creation
+- [ ] .gitignore
+- [ ] VERSION
+- [ ] PRD.md
+- [ ] CLAUDE.md
+- [ ] DESIGN.md
+- [ ] docs/ARCHITECTURE.md
+- [ ] docs/adr/001-initial-project-setup.md
+- [ ] docs/GIT_WORKFLOW.md
+- [ ] SECURITY.md
+- [ ] README.md
+- [ ] .env.example
+- [ ] AGENTS.md
+- [ ] CHANGELOG.md
+- [ ] LICENSE
+- [ ] .github/workflows/ci.yml
+
+## Post-Scaffolding
+- [ ] Git commit
+- [ ] GitHub repo creation
+```
+
+Only list files that are **missing** (from Phase 0 audit). Already-existing files are omitted.
+
+If `TODOS.md` already exists, create a temporary scaffolding checklist section at the top
+instead of overwriting. Remove it after Phase 5 completes.
+
+**Progressive checkoff:** After creating each file in Phase 5, immediately update `TODOS.md`
+to mark that file as done (`- [x]`). Do not wait until the end — check off each file
+right after writing it. This gives the user real-time progress visibility.
 
 ---
 
@@ -202,6 +282,10 @@ placeholder comments. Content is adapted based on project type preset and detect
 - If a write fails mid-stream (e.g., permission denied, disk full), stop and report which files
   were created vs. which remain. Do not attempt rollback — partial scaffolding is still useful
   and the user can re-run in "fill gaps" mode to complete.
+
+**Progressive checkoff:** After writing each file, immediately update `TODOS.md` to mark
+that file as done. Change `- [ ] filename` to `- [x] filename`. This gives the user
+real-time visibility into progress — they can see which files have been created at any point.
 
 ### File 1: `.gitignore`
 
@@ -471,6 +555,10 @@ If you discover a security vulnerability, please report it responsibly:
 
 ### File 10: `TODOS.md`
 
+`TODOS.md` was already created in Phase 0.5 as the scaffolding checklist. In this step,
+**update it** (don't overwrite) — replace the scaffolding content with the permanent
+project TODO structure while preserving the checkoff progress:
+
 ```markdown
 # {PROJECT_NAME} TODO
 
@@ -487,7 +575,10 @@ If you discover a security vulnerability, please report it responsibly:
 - [ ] ...
 
 ## Done
+- [x] Initial project scaffolding via /avad-new ({N} files created)
 ```
+
+Mark `- [x] TODOS.md` in the scaffolding checklist after this update.
 
 ### File 11: `README.md`
 
@@ -621,10 +712,11 @@ Adapt for Go (`go test ./...`), Ruby (`bundle exec rake test`), Rust (`cargo tes
 
 ## Phase 6: Git Commit
 
-Stage only files in the `created_files` list (never `git add -A`):
+Mark `- [x] Git commit` in `TODOS.md`. Stage only files in the `created_files` list
+plus `TODOS.md` (never `git add -A`):
 
 ```bash
-git add {created_files}
+git add {created_files} TODOS.md
 git commit -m "chore: initial project scaffolding via /avad-new"
 ```
 
@@ -655,20 +747,62 @@ If yes:
 gh repo create {PROJECT_NAME} --private/--public --source . --push
 ```
 
+Mark `- [x] GitHub repo creation` in `TODOS.md` after successful creation.
+
 ---
 
 ## Phase 8: Smart Chaining (context-aware)
 
-Based on user answers, recommend the most valuable next step:
+**Do not rush to design.** First assess whether the product idea is fully formed.
 
-- **If project type is Web App or has UI:** "Your project has a user-facing side. Run `/avad-design-consultation` to create your design system?" → AskUserQuestion with Yes (Recommended) | Skip
-- **If problem statement is vague or 30-day goal is ambitious:** "Your PRD could use more depth. Run `/avad-plan-ceo-review` to stress-test your product thinking?" → AskUserQuestion with Yes (Recommended) | Skip
-- **If ARCHITECTURE.md was generated with component table:** "Your ARCHITECTURE.md has a solid skeleton. Run `/avad-plan-eng-review` to stress-test the technical decisions?" → AskUserQuestion with Yes | Skip
-- **Otherwise:** Print next steps checklist:
-  - Flesh out PRD.md (Problem and Users are filled, add Features and Vision)
-  - Run `/avad-design-consultation` for design system
-  - Run `/avad-plan-eng-review` to validate architecture
-  - Run `/avad-plan-ceo-review` to challenge your plan
+### Step 1: Idea Completeness Check
+
+Evaluate the user's answers from Phase 2-3. The idea is **incomplete** if ANY of these are true:
+- Problem statement is vague or generic (no specific pain point)
+- User persona is too broad ("everyone", "people")
+- 30-day goal has no concrete deliverable
+- Phase 3 challenges triggered and answers were still fuzzy after 2 rounds
+- PRD.md has more `<!-- TODO -->` placeholders than filled content
+- No clear differentiation from existing solutions
+
+### Step 2: Route based on completeness
+
+**If idea is incomplete** → AskUserQuestion:
+```
+avad Recommends: A
+
+The idea has potential but some areas need more depth before jumping to design.
+
+A) Keep exploring — let's research the market, refine the problem, and flesh out
+   the PRD together (avad's pick)
+B) Run /avad-plan-ceo-review — stress-test the product thinking with a CEO review
+C) Move to design anyway — I'll figure it out as I go
+```
+
+If user picks A:
+- Use Agent (Explore) to research: similar products, market context, user pain points
+- Ask follow-up questions to fill PRD gaps (Vision, Features, Non-Goals)
+- Update PRD.md, AGENTS.md, and TODOS.md with new insights
+- After research, re-ask: "Ready for design now, or keep refining?"
+- Loop until user says ready (no max rounds — let them drive)
+
+**If idea is complete** → AskUserQuestion:
+```
+avad Recommends: A
+
+Your product thinking is solid. What's next?
+
+A) Run /avad-plan-ceo-review — challenge assumptions before building (avad's pick)
+B) Run /avad-design-consultation — create your design system
+C) Run /avad-plan-eng-review — validate the architecture
+D) Start coding — I have enough direction
+```
+
+Recommend based on context:
+- Web App / has UI → lean toward design consultation
+- Complex architecture → lean toward eng review
+- Ambitious scope → lean toward CEO review
+- Simple/clear project → "Start coding" is fine
 
 ---
 
