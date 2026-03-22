@@ -2,6 +2,11 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.9.0] - 2026-03-22
+
+### Added
+- **avad-new** — new skill: project scaffolding with 10-phase workflow. Asks 5 product questions (problem, user, 30-day goal, project type, stack), generates 16 pre-filled files. Features: file audit with fill-gaps mode, product clarity gate (CEO mindset), tech stack detection with context7 research, project type presets (Web App/CLI/API/Library), GitHub repo creation, smart chaining to next skill.
+
 ## [2.8.0] - 2026-03-22
 
 ### Added
