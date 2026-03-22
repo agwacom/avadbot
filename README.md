@@ -18,6 +18,7 @@ Works with any project, any language, any framework.
 | `/avad-retro` | Weekly retro. Commits, patterns, team breakdown, trends. |
 | `/avad-debug` | Systematic debugger. Root cause investigation, pattern analysis, hypothesis testing. |
 | `/avad-document-release` | Post-ship docs. Cross-references the diff, updates all project documentation. |
+| `/avad-new` | Project scaffolding. Asks 5 product questions, generates 16 pre-filled files, detects tech stack, creates GitHub repo. |
 | `/avad-help` | Skill hub. Shows available skills, recommends the right one, checks for updates. |
 | `/avad-design-consultation` | Design system creation. Researches your space, proposes aesthetic/typography/color, generates preview, writes DESIGN.md. |
 | `/avad-design-review` | Visual QA + fix loop. Finds spacing issues, AI slop patterns, interaction problems — then fixes them with before/after screenshots. |
@@ -32,7 +33,8 @@ Works with any project, any language, any framework.
 Each skill is a cognitive mode. You switch between them as your work progresses:
 
 ```
-1. Describe the feature
+1. /avad-new
+   → Asks 5 questions, scaffolds 16 pre-filled project files
 
 2. /avad-plan-ceo-review
    → "You're thinking too small. The real product is..."
@@ -152,6 +154,17 @@ Post-ship documentation updater. Run after shipping code to ensure all docs matc
 - Checks cross-doc consistency and discoverability
 - Cleans up TODOS.md and optionally bumps VERSION
 
+### `/avad-new`
+
+Project scaffolding. Asks 5 product questions (problem, user, 30-day goal, project type, stack), then generates 16 pre-filled files — not empty skeletons. PRD.md has your problem statement, README.md has your audience, TODOS.md has your milestone broken into tasks.
+
+Features:
+- Product clarity gate (CEO mindset — challenges vague answers)
+- Tech stack detection + context7 research
+- Project type presets (Web App, CLI, API, Library)
+- GitHub repo creation
+- Smart chaining (recommends next skill based on context)
+
 ### `/avad-help`
 
 Skill hub: shows all available avadbot skills, helps pick the right one, and checks for updates. Context-aware — describe what you want to do and it recommends the best skill.
@@ -215,7 +228,7 @@ Add to your `~/.claude/CLAUDE.md`:
 ```markdown
 ## avadbot
 
-Available skills: /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /avad-browse
+Available skills: /avad-new, /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /avad-browse
 ```
 
 ### Migrating from legacy install

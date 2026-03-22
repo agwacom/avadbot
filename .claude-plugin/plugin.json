@@ -1,7 +1,7 @@
 {
   "name": "avadbot",
-  "version": "2.8.0",
-  "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, debugging, documentation, browser automation, and engineering retrospectives. Works with any project, any language, any framework. Use for /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /avad-browse, or any workflow requiring structured plan review, pre-landing code review, one-command shipping, browser-based QA, systematic debugging, post-ship documentation, skill discovery, or engineering retrospectives.",
+  "version": "2.9.0",
+  "description": "Claude Code skill suite: plan review, code review, shipping, QA testing, debugging, documentation, browser automation, project scaffolding, and engineering retrospectives. Works with any project, any language, any framework. Use for /avad-new, /avad-plan-ceo-review, /avad-plan-eng-review, /avad-review, /avad-ship, /avad-qa, /avad-retro, /avad-debug, /avad-document-release, /avad-help, /avad-browse, or any workflow requiring project scaffolding, structured plan review, pre-landing code review, one-command shipping, browser-based QA, systematic debugging, post-ship documentation, skill discovery, or engineering retrospectives.",
   "author": {
     "name": "Naif",
     "url": "https://github.com/naifco"

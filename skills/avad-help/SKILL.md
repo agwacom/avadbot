@@ -1,6 +1,6 @@
 ---
 name: avad-help
-version: 2.8.0
+version: 2.9.0
 description: |
   Skill hub: shows all available avadbot skills, helps pick the right one,
   and checks for updates. Use when unsure which skill to run, or to see
@@ -98,6 +98,10 @@ Skill                        What it does                              When to u
 
 /avadbot:avad-guard            Combined careful + freeze in one cmd    Safety + focus: both guardrails
 
+/avadbot:avad-new              Project scaffolding — asks 5 product      Starting a project: scaffold
+                               questions, generates 16 pre-filled       16 pre-filled files
+                               files, detects stack, creates repo
+
 /avadbot:avad-help              Skill hub — shows all skills,            When unsure which skill to use:
                                context-aware routing, update check      see what's available
 
@@ -121,6 +125,7 @@ If the user described what they want to do (either in the invocation or as a fol
 - "design plan", "design critique", "design score" → `/avadbot:avad-plan-design-review`
 - "design system", "DESIGN.md", "colors", "typography" → `/avadbot:avad-design-consultation`
 - "visual QA", "design audit", "spacing", "AI slop" → `/avadbot:avad-design-review`
+- "new project", "scaffold", "init", "start a project" → `/avadbot:avad-new`
 - "careful", "safety", "prod mode", "guardrails" → `/avadbot:avad-careful`
 - "freeze", "restrict edits", "lock directory" → `/avadbot:avad-freeze`
 - "unfreeze", "unlock edits" → `/avadbot:avad-unfreeze`
@@ -137,7 +142,8 @@ If the user described what they want to do (either in the invocation or as a fol
 - G) Browse/screenshot a page
 - H) Run a weekly retro
 - I) Design system or design review
-- J) Enable safety guardrails (careful/freeze/guard)
+- J) Start a new project (scaffold files)
+- K) Enable safety guardrails (careful/freeze/guard)
 
 Then recommend the specific skill with the exact command to run.
 
@@ -147,8 +153,8 @@ After recommending, briefly show the typical workflow order:
 
 ```
 Typical workflow:
-  Plan  →  Build  →  Review  →  Ship  →  QA  →  Docs  →  Retro
-  /avad-plan-*  →  /avad-review  →  /avad-ship  →  /avad-qa  →  /avad-document-release  →  /avad-retro
+  New  →  Plan  →  Build  →  Review  →  Ship  →  QA  →  Docs  →  Retro
+  /avad-new  →  /avad-plan-*  →  /avad-review  →  /avad-ship  →  /avad-qa  →  /avad-document-release  →  /avad-retro
 ```
 
 ## Rules

@@ -1,6 +1,6 @@
 ---
 name: avad-guard
-version: 2.8.0
+version: 2.9.0
 description: |
   Full safety mode: destructive command warnings + directory-scoped edits.
   Combines /avad-careful (warns before rm -rf, DROP TABLE, force-push, etc.) with
