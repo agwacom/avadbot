@@ -60,19 +60,19 @@ _ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 B=""
 # Primary tiers — new name (7 tiers)
 [ -n "$_ROOT" ] && [ -x "$_ROOT/skills/avad-browse/dist/avad-browse" ] && B="$_ROOT/skills/avad-browse/dist/avad-browse"
-[ -z "$B" ] && [ -n "$_ROOT" ] && for _D in "$_ROOT"/*/skills/avad-browse/dist/avad-browse; do [ -x "$_D" ] && B="$_D" && break; done
+[ -z "$B" ] && [ -n "$_ROOT" ] && for _D in "$_ROOT"/*/skills/avad-browse/dist/avad-browse; do [ -x "$_D" ] && B="$_D" && break; done 2>/dev/null
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avad-browse/dist/avad-browse" ] && B="$_ROOT/.claude/skills/avad-browse/dist/avad-browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/avad-browse/dist/avad-browse" ] && B="$_ROOT/.claude/skills/avadbot/avad-browse/dist/avad-browse"
 [ -z "$B" ] && [ -x ~/.claude/skills/avad-browse/dist/avad-browse ] && B=~/.claude/skills/avad-browse/dist/avad-browse
 [ -z "$B" ] && [ -x ~/.claude/skills/avadbot/avad-browse/dist/avad-browse ] && B=~/.claude/skills/avadbot/avad-browse/dist/avad-browse
-[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/avad-browse/dist/avad-browse; do [ -x "$_P" ] && B="$_P" && break; done
+[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/avad-browse/dist/avad-browse; do [ -x "$_P" ] && B="$_P" && break; done 2>/dev/null
 # Legacy fallbacks — old name (backward compat, 6 tiers)
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/skills/browse/dist/browse" ] && B="$_ROOT/skills/browse/dist/browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/browse/dist/browse" ] && B="$_ROOT/.claude/skills/browse/dist/browse"
 [ -z "$B" ] && [ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/avadbot/browse/dist/browse" ] && B="$_ROOT/.claude/skills/avadbot/browse/dist/browse"
 [ -z "$B" ] && [ -x ~/.claude/skills/browse/dist/browse ] && B=~/.claude/skills/browse/dist/browse
 [ -z "$B" ] && [ -x ~/.claude/skills/avadbot/browse/dist/browse ] && B=~/.claude/skills/avadbot/browse/dist/browse
-[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/browse/dist/browse; do [ -x "$_P" ] && B="$_P" && break; done
+[ -z "$B" ] && for _P in ~/.claude/plugins/*/skills/browse/dist/browse; do [ -x "$_P" ] && B="$_P" && break; done 2>/dev/null
 if [ -x "$B" ]; then
   echo "READY: $B"
 else
