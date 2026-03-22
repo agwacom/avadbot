@@ -1,6 +1,6 @@
 ---
 name: avad-browse
-version: 2.7.0
+version: 2.8.0
 description: |
   Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with
   elements, verify page state, diff before/after actions, take annotated screenshots, check
@@ -289,6 +289,8 @@ Refs (`@e1`, `@e2`, ...) are cleared on full page navigation (`framenavigated`),
 ### Server
 | Command | Description |
 |---------|-------------|
+| `handoff [message]` | Open visible Chrome at current page for user takeover |
 | `restart` | Restart server |
+| `resume` | Re-snapshot after user takeover, return control to AI |
 | `status` | Health check |
 | `stop` | Shutdown server |

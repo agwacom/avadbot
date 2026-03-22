@@ -1,6 +1,6 @@
 ---
 name: avad-qa
-version: 2.7.0
+version: 2.8.0
 description: |
   Systematically QA test a web application and fix bugs found. Runs QA testing,
   then iteratively fixes bugs in source code, committing each fix atomically and

@@ -1,6 +1,6 @@
 ---
 name: avad-unfreeze
-version: 2.7.0
+version: 2.8.0
 description: |
   Clear the freeze boundary set by /avad-freeze, allowing edits to all directories
   again. Use when you want to widen edit scope without ending the session.

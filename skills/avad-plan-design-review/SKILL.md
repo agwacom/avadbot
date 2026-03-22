@@ -1,6 +1,6 @@
 ---
 name: avad-plan-design-review
-version: 2.7.0
+version: 2.8.0
 description: |
   Designer's eye plan review — interactive, like CEO and Eng review.
   Rates each design dimension 0-10, explains what would make it a 10,

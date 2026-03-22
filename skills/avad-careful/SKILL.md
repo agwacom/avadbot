@@ -1,6 +1,6 @@
 ---
 name: avad-careful
-version: 2.7.0
+version: 2.8.0
 description: |
   Safety guardrails for destructive commands. Warns before rm -rf, DROP TABLE,
   force-push, git reset --hard, kubectl delete, and similar destructive operations.

@@ -1,6 +1,6 @@
 ---
 name: avad-plan-ceo-review
-version: 2.7.0
+version: 2.8.0
 description: |
   CEO/founder-mode plan review. Rethink the problem, find the 10-star product,
   challenge premises, expand scope when it creates a better product. Four modes:
@@ -8,12 +8,15 @@ description: |
   expansions), HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials).
   Use when asked to "think bigger", "expand scope", "strategy review", "rethink this",
   or "is this ambitious enough".
+  Proactively suggest when the user is questioning scope or ambition of a plan,
+  or when the plan feels like it could be thinking bigger.
 allowed-tools:
   - Read
   - Grep
   - Glob
   - Bash
   - AskUserQuestion
+  - WebSearch
 ---
 <!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
@@ -91,7 +94,7 @@ Run the following commands:
 git log --oneline -30                          # Recent history
 git diff main --stat                           # What's already changed
 git stash list                                 # Any stashed work
-grep -r "TODO\|FIXME\|HACK\|XXX" --include="*.rb" --include="*.js" -l
+grep -r "TODO\|FIXME\|HACK\|XXX" -l --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=.git . | head -30
 find . -name "*.rb" -newer Gemfile.lock | head -20  # Recently touched files
 ```
 Then read CLAUDE.md, TODOS.md, and any existing architecture docs. Map:
@@ -119,6 +122,22 @@ Analyze the plan. If it involves ANY of: new UI screens/pages, changes to existi
 ### Taste Calibration (EXPANSION and SELECTIVE EXPANSION modes)
 Identify 2-3 files or patterns in the existing codebase that are particularly well-designed. Note them as style references for the review. Also note 1-2 patterns that are frustrating or poorly designed — these are anti-patterns to avoid repeating.
 Report findings before proceeding to Step 0.
+
+### Landscape Check
+
+Before challenging scope, understand the landscape. Use WebSearch to research:
+- "[product category] landscape {current year}"
+- "[key feature] alternatives"
+- "why [incumbent/conventional approach] [succeeds/fails]"
+
+If WebSearch is unavailable, skip this check and note: "Search unavailable — proceeding with in-distribution knowledge only."
+
+Run the three-layer synthesis:
+- **[Layer 1]** What's the tried-and-true approach in this space?
+- **[Layer 2]** What are the search results saying?
+- **[Layer 3]** First-principles reasoning — where might the conventional wisdom be wrong?
+
+Feed into the Premise Challenge (0A) and Dream State Mapping (0C). If you find a eureka moment — a reason the standard approach is wrong for this case — surface it during the Expansion opt-in ceremony as a differentiation opportunity.
 
 ## Step 0: Nuclear Scope Challenge + Mode Selection
 

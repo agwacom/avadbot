@@ -2,6 +2,22 @@
 
 All notable changes to avadbot will be documented in this file.
 
+## [2.8.0] - 2026-03-22
+
+### Added
+- **avad-review:** `Agent` + `WebSearch` in allowed-tools, search-before-recommending rule, proactive trigger description
+- **avad-ship:** `Agent` in allowed-tools
+- **avad-plan-ceo-review:** `WebSearch` in allowed-tools, Landscape Check section, proactive trigger description
+- **avad-plan-eng-review:** `WebSearch` in allowed-tools, Step 0 search check, proactive trigger description, layer annotations
+- **avad-browse:** `handoff`/`resume` commands, `BrowserState` interface, URL validation in `newTab()`, headed-mode close timeout, `buildContextOptions()` DRY helper
+
+### Changed
+- **avad-browse:** removed dead failure-tracking code, typed `contextOptions` as `BrowserContextOptions` (was `any`)
+
+### Fixed
+- **avad-retro:** midnight-aligned date windows, removed hardcoded Pacific timezone
+- **avad-plan-ceo-review:** TODOS.md grep no longer scans node_modules/vendor/.git
+
 ## [2.7.0] - 2026-03-20
 
 ### Added

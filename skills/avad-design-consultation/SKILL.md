@@ -1,6 +1,6 @@
 ---
 name: avad-design-consultation
-version: 2.7.0
+version: 2.8.0
 description: |
   Design consultation: understands your product, researches the landscape, proposes a
   complete design system (aesthetic, typography, color, layout, spacing, motion), and

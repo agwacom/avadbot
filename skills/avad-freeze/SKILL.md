@@ -1,6 +1,6 @@
 ---
 name: avad-freeze
-version: 2.7.0
+version: 2.8.0
 description: |
   Restrict file edits to a specific directory for the session. Blocks Edit and
   Write outside the allowed path. Use when debugging to prevent accidentally

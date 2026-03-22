@@ -46,7 +46,6 @@ export async function handleMetaCommand(
 
     case 'newtab': {
       const url = args[0];
-      if (url) validateNavigationUrl(url);
       const id = await bm.newTab(url);
       return `Opened tab ${id}${url ? ` → ${url}` : ''}`;
     }
@@ -248,6 +247,19 @@ export async function handleMetaCommand(
     // ─── Snapshot ─────────────────────────────────────
     case 'snapshot': {
       return await handleSnapshot(args, bm);
+    }
+
+    // ─── Handoff ────────────────────────────────────
+    case 'handoff': {
+      const message = args.join(' ') || 'User takeover requested';
+      return await bm.handoff(message);
+    }
+
+    case 'resume': {
+      await bm.resume();
+      // Re-snapshot to capture current page state after human interaction
+      const snapshot = await handleSnapshot(['-i'], bm);
+      return `RESUMED\n${snapshot}`;
     }
 
     default:

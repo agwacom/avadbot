@@ -1,6 +1,6 @@
 ---
 name: avad-help
-version: 2.7.0
+version: 2.8.0
 description: |
   Skill hub: shows all available avadbot skills, helps pick the right one,
   and checks for updates. Use when unsure which skill to run, or to see

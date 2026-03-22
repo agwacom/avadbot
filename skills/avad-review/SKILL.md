@@ -1,10 +1,11 @@
 ---
 name: avad-review
-version: 2.7.0
+version: 2.8.0
 description: |
   Pre-landing code review. Analyzes diff for structural issues using a project-specific
   checklist. Two modes: local (review current branch) or PR (review and comment on a
   GitHub PR by number).
+  Proactively suggest when the user is about to merge or land code changes.
 allowed-tools:
   - Bash
   - Read
@@ -12,7 +13,9 @@ allowed-tools:
   - Edit
   - Grep
   - Glob
+  - Agent
   - AskUserQuestion
+  - WebSearch
 ---
 <!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
@@ -278,6 +281,13 @@ Apply the checklist against the diff:
 2. **Pass 2 (INFORMATIONAL):** non-blocking categories
 
 **Enum & Value Completeness requires reading code OUTSIDE the diff.** When the diff introduces a new enum value, status, tier, or type constant, use Grep to find all files that reference sibling values, then Read those files to check if the new value is handled in switches, allowlists, and filters. This is the one category where within-diff review is insufficient.
+
+**Search-before-recommending:** When recommending a fix pattern (especially for concurrency, caching, auth, or framework-specific behavior):
+- Verify the pattern is current best practice for the framework version in use
+- Check if a built-in solution exists in newer versions before recommending a workaround
+- Verify API signatures against current docs (APIs change between versions)
+
+Takes seconds, prevents recommending outdated patterns. If WebSearch is unavailable, note it and proceed with in-distribution knowledge.
 
 Respect the suppressions — do NOT flag items in the suppressions section.
 Read the FULL diff before commenting — do not flag issues already addressed in the diff.

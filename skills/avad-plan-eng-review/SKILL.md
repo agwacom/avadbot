@@ -1,10 +1,12 @@
 ---
 name: avad-plan-eng-review
-version: 2.7.0
+version: 2.8.0
 description: |
   Eng manager-mode plan review. Lock in the execution plan — architecture,
   data flow, diagrams, edge cases, test coverage, performance. Walks through
   issues interactively with opinionated recommendations.
+  Proactively suggest when the user has a plan or design doc and is about to
+  start coding — to catch architecture issues before implementation.
 allowed-tools:
   - Bash
   - Read
@@ -12,6 +14,7 @@ allowed-tools:
   - Grep
   - Glob
   - AskUserQuestion
+  - WebSearch
 ---
 <!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
@@ -76,12 +79,20 @@ Before reviewing anything, answer these questions:
 1. **What existing code already partially or fully solves each sub-problem?** Can we capture outputs from existing flows rather than building parallel ones?
 2. **What is the minimum set of changes that achieves the stated goal?** Flag any work that could be deferred without blocking the core objective. Be ruthless about scope creep.
 3. **Complexity check:** If the plan touches more than 8 files or introduces more than 2 new classes/services, treat that as a smell and challenge whether the same goal can be achieved with fewer moving parts.
-4. **TODOS.md check:** Read `TODOS.md` in the repo root (skip silently if it doesn't exist). Check for:
+4. **Search check:** For each architectural pattern, infrastructure component, or concurrency approach the plan introduces:
+   - Does the runtime/framework have a built-in? Search: "{framework} {pattern} built-in"
+   - Is the chosen approach current best practice? Search: "{pattern} best practice {current year}"
+   - Are there known footguns? Search: "{framework} {pattern} pitfalls"
+
+   If WebSearch is unavailable, skip this check and note: "Search unavailable — proceeding with in-distribution knowledge only."
+
+   If the plan rolls a custom solution where a built-in exists, flag it as a scope reduction opportunity. Annotate recommendations with **[Layer 1]** (tried-and-true approach), **[Layer 2]** (what search results say), **[Layer 3]** (first-principles reasoning), or **[EUREKA]** (a reason the standard approach is wrong for this case). If you find a eureka moment, present it as an architectural insight.
+5. **TODOS.md check:** Read `TODOS.md` in the repo root (skip silently if it doesn't exist). Check for:
    - Items that **block** this plan or are **blocked by** it
    - Items that could be **bundled** with this plan for minimal extra effort
    - New TODO items this plan will create — draft them now for the TODOS.md updates section
-5. **Completeness check:** Is the plan doing the complete version or a shortcut? With AI-assisted coding, the cost of completeness (100% test coverage, full edge case handling, complete error paths) is 10-100x cheaper than with a human team. If the plan proposes a shortcut that saves human-hours but only saves minutes with AI-assisted coding, recommend the complete version. Boil the lake.
-6. **Documentation completeness:** Does the plan include a documentation section listing all files that need cross-reference updates? Plans without this section are incomplete.
+6. **Completeness check:** Is the plan doing the complete version or a shortcut? With AI-assisted coding, the cost of completeness (100% test coverage, full edge case handling, complete error paths) is 10-100x cheaper than with a human team. If the plan proposes a shortcut that saves human-hours but only saves minutes with AI-assisted coding, recommend the complete version. Boil the lake.
+7. **Documentation completeness:** Does the plan include a documentation section listing all files that need cross-reference updates? Plans without this section are incomplete.
 
 If the complexity check triggers (8+ files or 2+ new classes/services), proactively recommend scope reduction via AskUserQuestion — explain what's overbuilt, propose a minimal version that achieves the core goal, and ask whether to reduce or proceed as-is. If the complexity check does not trigger, present your Step 0 findings and proceed directly to Section 1.
 
